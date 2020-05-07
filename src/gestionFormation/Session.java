@@ -68,34 +68,34 @@ public class Session extends JFrame {
 
 		//paramétrage graphique du frame
 		sessionsFrame.setTitle("Session");
-		sessionsFrame.setBounds(100, 100, 822, 425);
+		sessionsFrame.setBounds(100, 100, 893, 437);
 		sessionsFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		sessionsFrame.getContentPane().setLayout(null);
 		sessionsFrame.getContentPane().setLayout(null);
 
 		//paramétrage graphique du panel
-		panel_sessions.setBounds(20, 78, 776, 245);
+		panel_sessions.setBounds(10, 78, 826, 245);
 		panel_sessions.setForeground(Color.BLUE);
 		panel_sessions.setBorder(new TitledBorder(null, "SESSION", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		sessionsFrame.getContentPane().add(panel_sessions);
 		panel_sessions.setLayout(null);
 
 		//paramétrage graphique du scrollpane
-		scrollPanSess.setBounds(6, 16, 574, 218);
+		scrollPanSess.setBounds(6, 16, 645, 218);
 		panel_sessions.add(scrollPanSess);
 		scrollPanSess.setViewportView(tableSessions);
 		scrollPanSess.setRowHeaderView(scrollBarSess);
 
 		//paramétrage graphique du boutton insérer
-		btnInsertSess.setBounds(590, 68, 176, 23);
+		btnInsertSess.setBounds(661, 68, 155, 23);
 		panel_sessions.add(btnInsertSess);
 
 		//paramétrage graphique du boutton modifier
-		btnUpdateSess.setBounds(590, 102, 176, 23);
+		btnUpdateSess.setBounds(661, 102, 155, 23);
 		panel_sessions.add(btnUpdateSess);
 
 		//paramétrage graphique du boutton supprimer
-		btnDeleteSess.setBounds(590, 137, 176, 23);
+		btnDeleteSess.setBounds(661, 136, 155, 23);
 		panel_sessions.add(btnDeleteSess);
 
 		//paramétrage graphique du label numSession
@@ -170,7 +170,7 @@ public class Session extends JFrame {
 		sessionsFrame.getContentPane().add(lblNbPlaces);
 
 		//paramétrage graphique du jcombobox numSession
-		comboNumSess.setBounds(17, 35, 89, 22);
+		comboNumSess.setBounds(10, 35, 96, 22);
 		sessionsFrame.getContentPane().add(comboNumSess);
 
 		//ajout des collonnes au tableau sessions
@@ -208,7 +208,7 @@ public class Session extends JFrame {
 				comboNumForma.removeAllItems();
 				try {
 
-					BDD.executeSelect("SELECT `numSession` FROM `session` GROUP BY `numSession`");
+					BDD.executeSelect("SELECT `numSession` FROM `session`");
 					while (BDD.getRs().next()) {  
 						comboNumSess.addItem(Integer.toString(BDD.getRs().getInt("numSession")));  
 					}
@@ -307,7 +307,7 @@ public class Session extends JFrame {
 	public String getStringNumSess() {
 		return comboNumSess.getSelectedItem().toString();
 	}
-	
+
 	public String getDateLimit() {
 		return txtDateDeLimite.getText();
 	}

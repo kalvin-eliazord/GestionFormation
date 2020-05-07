@@ -31,7 +31,7 @@ public class Acceuil {
 		frameAcceuil.setBounds(100, 100, 436, 287);
 		frameAcceuil.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frameAcceuil.getContentPane().setLayout(null);
-		
+
 		//paramétrage du panel 
 		panelGestionForma.setBorder(new TitledBorder(null, "GESTIONNAIRE DE FORMATION", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panelGestionForma.setBounds(84, 94, 240, 56);
@@ -57,20 +57,20 @@ public class Acceuil {
 				//requete qui va itialiser le tableau des intervenants
 				BDD.executeSelect("SELECT * FROM `intervenant`");
 				Intervenant.getTableInter().setModel(DbUtils.resultSetToTableModel(BDD.getRs()));
-				
+
 				//mis à jour du jcombobox
 				Intervenant.getComboIdInter().removeAllItems();
 				try {
 					BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
 					while (BDD.getRs().next()) {  
 						Intervenant.getComboIdInter().addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
-					 }
-				
+					}
+
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-			
+
 			}
 		});
 
