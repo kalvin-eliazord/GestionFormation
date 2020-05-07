@@ -49,7 +49,7 @@ public class BDD {
 		}
 		catch (SQLException e) {
 			// TODO Auto-generated catch block
-			System.out.println("Problème Connexion BDD "+ bddName + "  !!");
+			Connexion.affichagePopUp("Connexion à la BDD "+ bddName + " échoué!");
 
 			e.printStackTrace();
 		}
@@ -74,7 +74,7 @@ public class BDD {
 
 		} catch (SQLException e) {
 
-			Connexion.affichagePopUp("Probleme requete SELECT non executée !!");
+			Connexion.affichagePopUp("Erreur! Requête SELECT non executée !!");
 			e.printStackTrace();
 		}
 	}
@@ -94,7 +94,7 @@ public class BDD {
 				Connexion.affichagePopUp("Supprimer la SESSION liée AVANT!");
 
 			} else {
-				Connexion.affichagePopUp("Ajout/Modification NON effectuée!!");
+				Connexion.affichagePopUp("Erreur! Mis à jour non effectuée!");
 
 			}
 			e.printStackTrace();
