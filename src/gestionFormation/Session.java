@@ -240,10 +240,42 @@ public class Session extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 
 				//requete qui met à jour les informations
-				BDD.executeUpdate("UPDATE `session` SET `numSession`='"+comboNumSess+"',`dateLimiteinsc`='"+getDateLimit()+"', `dateSession`='"+getDateSess()+"', `dateDeFin`='"+getDateDeFin()+"', `idIntervenant`='"+getIdIntervenant()+"',`idLieu`='"+getIdLieu()+"', `numFormation`='"+getNumFormation()+"', `nbPlaces`='"+getTxtNbPlaces()+"'  WHERE `numSession`='"+getComboNumSess()+"'");
+				BDD.executeUpdate("UPDATE `session` SET `dateLimiteinsc`='"+getDateLimit()+"', `dateSession`='"+getDateSess()+"', `dateDeFin`='"+getDateDeFin()+"', `idIntervenant`='"+getIdIntervenant()+"',`idLieu`='"+getIdLieu()+"', `numFormation`='"+getNumFormation()+"', `nbPlaces`='"+getTxtNbPlaces()+"'  WHERE `numSession`='"+getStringNumSess()+"'");
 				// mis à jour du tableau 
 				BDD.executeSelect("SELECT * FROM `session`");
 				tableSessions.setModel(DbUtils.resultSetToTableModel(BDD.getRs()));	
+
+				//mis à jour des Jcombobox
+				comboNumSess.removeAllItems();
+				comboIdInter.removeAllItems();
+				comboIdLieu.removeAllItems();
+				comboNumForma.removeAllItems();
+				try {
+
+					BDD.executeSelect("SELECT `numSession` FROM `session`");
+					while (BDD.getRs().next()) {  
+						comboNumSess.addItem(Integer.toString(BDD.getRs().getInt("numSession")));  
+					}
+
+					BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
+					while (BDD.getRs().next()) {  
+						comboIdInter.addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
+					}
+
+					BDD.executeSelect("SELECT `idLieu` FROM `lieu`");
+					while (BDD.getRs().next()) {  
+						comboIdLieu.addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
+					}
+
+					BDD.executeSelect("SELECT `numFormation` FROM `formation`");
+					while (BDD.getRs().next()) {  
+						comboNumForma.addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
+					}
+
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 
