@@ -1,4 +1,4 @@
-package formationAdmin;
+package gestionFormation;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -10,12 +10,15 @@ import javax.swing.table.DefaultTableModel;
 import net.proteanit.sql.DbUtils;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import javax.swing.JComboBox;
 
-public class Sessions extends JFrame {
+public class Session extends JFrame {
 
 	/**
 	 * 
@@ -31,14 +34,11 @@ public class Sessions extends JFrame {
 	private JPanel panel_sessions = new JPanel();
 	private JScrollBar scrollBarSess = new JScrollBar();
 
-	//textfields
-	private JTextField txtNumSession = new JTextField();
+	//JTextfields
 	private JTextField txtDateDeLimite = new JTextField();
 	private JTextField txtDateDeFin  = new JTextField();
-	private JTextField txtIdIntervenant = new JTextField();
-	private JTextField txtIdLieu = new JTextField();
 	private JTextField txtDateSess = new JTextField();
-	private JTextField txtNumForma = new JTextField();
+	private JTextField txtNbPlaces = new JTextField();
 
 	//bouttons
 	private JButton btnUpdateSess = new JButton("Modifier");
@@ -46,7 +46,6 @@ public class Sessions extends JFrame {
 	private JButton btnAcceuil = new JButton("Retourner à l'acceuil");
 	private JButton btnDeleteSess = new JButton("Supprimer");
 	private JButton btnPrecedent = new JButton("Précédent");
-	private JButton btnFormations = new JButton("Formations");
 
 	//labels
 	private JLabel lblNumSession = new JLabel("numSession");
@@ -56,21 +55,28 @@ public class Sessions extends JFrame {
 	private JLabel lblIdLieuSess = new JLabel("idLieu");
 	private JLabel lblDateSess = new JLabel("dateSession");
 	private JLabel lblNumForma = new JLabel("numFormation");
+	private JLabel lblNbPlaces = new JLabel("nbPlaces");
+
+	//Jcombobox
+	private static JComboBox<String> comboIdInter = new JComboBox<String>();
+	private static JComboBox<String> comboIdLieu = new JComboBox<String>();
+	private static JComboBox<String> comboNumForma = new JComboBox<String>();
+	private static JComboBox<String> comboNumSess = new JComboBox<String>();
 
 	//constructeur
-	public Sessions() {
+	public Session() {
 
 		//paramétrage graphique du frame
-		sessionsFrame.setTitle("Sessions");
-		sessionsFrame.setBounds(100, 100, 759, 425);
+		sessionsFrame.setTitle("Session");
+		sessionsFrame.setBounds(100, 100, 822, 425);
 		sessionsFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		sessionsFrame.getContentPane().setLayout(null);
 		sessionsFrame.getContentPane().setLayout(null);
 
 		//paramétrage graphique du panel
-		panel_sessions.setBounds(20, 78, 713, 245);
+		panel_sessions.setBounds(20, 78, 776, 245);
 		panel_sessions.setForeground(Color.BLUE);
-		panel_sessions.setBorder(new TitledBorder(null, "SESSION DISPONIBLES", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_sessions.setBorder(new TitledBorder(null, "SESSION", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		sessionsFrame.getContentPane().add(panel_sessions);
 		panel_sessions.setLayout(null);
 
@@ -79,94 +85,93 @@ public class Sessions extends JFrame {
 		panel_sessions.add(scrollPanSess);
 		scrollPanSess.setViewportView(tableSessions);
 		scrollPanSess.setRowHeaderView(scrollBarSess);
-		
+
 		//paramétrage graphique du boutton insérer
-		btnInsertSess.setBounds(590, 68, 113, 23);
+		btnInsertSess.setBounds(590, 68, 176, 23);
 		panel_sessions.add(btnInsertSess);
-		
+
 		//paramétrage graphique du boutton modifier
-		btnUpdateSess.setBounds(590, 102, 113, 23);
+		btnUpdateSess.setBounds(590, 102, 176, 23);
 		panel_sessions.add(btnUpdateSess);
-		
+
 		//paramétrage graphique du boutton supprimer
-		btnDeleteSess.setBounds(590, 137, 113, 23);
+		btnDeleteSess.setBounds(590, 137, 176, 23);
 		panel_sessions.add(btnDeleteSess);
 
 		//paramétrage graphique du label numSession
 		lblNumSession.setBounds(20, 23, 86, 14);
 		sessionsFrame.getContentPane().add(lblNumSession);
-		
+
 		//paramétrage graphique du label nom
 		lblNom.setBounds(116, 23, 86, 14);
 		sessionsFrame.getContentPane().add(lblNom);
-		
+
 		//paramétrage graphique du label dateFin
 		lblDateFin.setBounds(311, 23, 65, 14);
 		sessionsFrame.getContentPane().add(lblDateFin);
-		
+
 		//paramétrage graphique du label titre
 		lblTitre.setBounds(407, 23, 89, 14);
 		sessionsFrame.getContentPane().add(lblTitre);
-		
-		//paramétrage graphique du textfield numSession
-		txtNumSession.setBounds(20, 36, 86, 20);
-		sessionsFrame.getContentPane().add(txtNumSession);
-		txtNumSession.setColumns(10);
-		
+
 		//paramétrage graphique du textfield dateDeLimite
 		txtDateDeLimite.setBounds(116, 36, 86, 20);
-		txtDateDeLimite.setText("AAAA-MM-JJ");
 		txtDateDeLimite.setToolTipText("");
 		sessionsFrame.getContentPane().add(txtDateDeLimite);
 		txtDateDeLimite.setColumns(10);
-		
+
 		//paramétrage graphique du textfield dateDeFin
 		txtDateDeFin.setBounds(311, 36, 86, 20);
-		txtDateDeFin.setText("AAAA-MM-JJ");
 		sessionsFrame.getContentPane().add(txtDateDeFin);
 		txtDateDeFin.setColumns(10);
-		
-		//paramétrage graphique du textfield idIntervenant
-		txtIdIntervenant.setBounds(407, 35, 86, 20);
-		sessionsFrame.getContentPane().add(txtIdIntervenant);
-		txtIdIntervenant.setColumns(10);
-		
+
 		//paramétrage graphique du boutton acceuil
-		btnAcceuil.setBounds(424, 346, 260, 23);
+		btnAcceuil.setBounds(536, 346, 260, 23);
 		sessionsFrame.getContentPane().add(btnAcceuil);
-		
+
 		//paramétrage graphique du label idLieu
-		lblIdLieuSess.setBounds(502, 23, 65, 14);
+		lblIdLieuSess.setBounds(513, 23, 65, 14);
 		sessionsFrame.getContentPane().add(lblIdLieuSess);
-		
+
 		//paramétrage graphique du label dateSession
 		lblDateSess.setBounds(212, 23, 89, 14);
 		sessionsFrame.getContentPane().add(lblDateSess);
-		
-		//paramétrage graphique du textfield DateSession
-		txtDateSess.setText("AAAA-MM-JJ");
 		txtDateSess.setColumns(10);
 		txtDateSess.setBounds(212, 36, 86, 20);
 		sessionsFrame.getContentPane().add(txtDateSess);
-		
-		//paramétrage graphique du txtfield idLieu
-		txtIdLieu.setColumns(10);
-		txtIdLieu.setBounds(502, 36, 86, 20);
-		sessionsFrame.getContentPane().add(txtIdLieu);
-		
+
 		//paramétrage graphique du label numFormation
-		lblNumForma.setBounds(598, 23, 105, 14);
+		lblNumForma.setBounds(612, 23, 105, 14);
 		sessionsFrame.getContentPane().add(lblNumForma);
-		
-		//paramétrage graphique du txtfield numFormation
-		txtNumForma.setColumns(10);
-		txtNumForma.setBounds(598, 36, 86, 20);
-		sessionsFrame.getContentPane().add(txtNumForma);
 
 		//paramétrage graphique du boutton précédent
 		btnPrecedent.setBounds(20, 346, 164, 23);
 		sessionsFrame.getContentPane().add(btnPrecedent);
-		btnFormations.setBounds(190, 346, 160, 23);
+
+		//paramétrage graphique du jcombobox idIntervenant
+		comboIdInter.setBounds(407, 35, 89, 22);
+		sessionsFrame.getContentPane().add(comboIdInter);
+
+		//paramétrage graphique du jcombobox idLieu
+		comboIdLieu.setBounds(512, 35, 90, 22);
+		sessionsFrame.getContentPane().add(comboIdLieu);
+
+		//paramétrage graphique du jcombobox numFormation
+		comboNumForma.setBounds(613, 35, 86, 22);
+		sessionsFrame.getContentPane().add(comboNumForma);
+
+		//paramétrage graphique du jtxtfield nbPlaces
+		txtNbPlaces.setColumns(10);
+		txtNbPlaces.setBounds(709, 36, 86, 20);
+		sessionsFrame.getContentPane().add(txtNbPlaces);
+
+		//paramétrage graphique du label nbPlaces
+		lblNbPlaces.setBounds(709, 23, 86, 14);
+		sessionsFrame.getContentPane().add(lblNbPlaces);
+
+		//paramétrage graphique du jcombobox numSession
+		comboNumSess.setBounds(17, 35, 89, 22);
+		sessionsFrame.getContentPane().add(comboNumSess);
 
 		//ajout des collonnes au tableau sessions
 		tableSessions.setModel(new DefaultTableModel(
@@ -176,25 +181,57 @@ public class Sessions extends JFrame {
 						"numSession", "dateLimiteInsc", "dateSession", "dateDeFin", "idIntervenant", "idLieu","numFormation", "nbPlaces"
 				}
 				));
-		
+
 		//ajout d'un actionListener sur le boutton retourner à l'acceuil
 		btnAcceuil.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				//passage au frame acceuil
 				Acceuil.getFrameAcceuil().setVisible(true);
 				sessionsFrame.setVisible(false);		
 			}
 		});
-		
+
 		//ajout d'un actionListener sur le boutton Delete
 		btnDeleteSess.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
 				//requete qui supprime les champs dont la numSession correspond
-				BDD.executeUpdate("DELETE FROM `session` WHERE `numSession`="+getNumSession());
+				BDD.executeUpdate("DELETE FROM `session` WHERE `numSession`="+getStringNumSess());
 				BDD.executeSelect("SELECT * FROM `session`");
 				tableSessions.setModel(DbUtils.resultSetToTableModel(BDD.getRs()));	
+
+				//mis à jour des Jcombobox
+				comboNumSess.removeAllItems();
+				comboIdInter.removeAllItems();
+				comboIdLieu.removeAllItems();
+				comboNumForma.removeAllItems();
+				try {
+
+					BDD.executeSelect("SELECT `numSession` FROM `session` GROUP BY `numSession`");
+					while (BDD.getRs().next()) {  
+						comboNumSess.addItem(Integer.toString(BDD.getRs().getInt("numSession")));  
+					}
+
+					BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
+					while (BDD.getRs().next()) {  
+						comboIdInter.addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
+					}
+
+					BDD.executeSelect("SELECT `idLieu` FROM `lieu`");
+					while (BDD.getRs().next()) {  
+						comboIdLieu.addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
+					}
+
+					BDD.executeSelect("SELECT `numFormation` FROM `formation`");
+					while (BDD.getRs().next()) {  
+						comboNumForma.addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
+					}
+
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 
@@ -203,7 +240,7 @@ public class Sessions extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 
 				//requete qui met à jour les informations
-				BDD.executeUpdate("UPDATE `session` SET `numSession`='"+getNumSession()+"',`dateLimiteinsc`='"+getTxtDateLimit()+"', `dateSession`='"+getTxtDateSess()+"', `dateDeFin`='"+getDateDeFin()+"', `idIntervenant`='"+getIdIntervenant()+"',`idLieu`='"+getTxtIdLieu()+"', `numFormation`='"+Formation.getTxtNumFormation()+"' WHERE `numSession`='"+getNumSession()+"'");
+				BDD.executeUpdate("UPDATE `session` SET `numSession`='"+comboNumSess+"',`dateLimiteinsc`='"+getDateLimit()+"', `dateSession`='"+getDateSess()+"', `dateDeFin`='"+getDateDeFin()+"', `idIntervenant`='"+getIdIntervenant()+"',`idLieu`='"+getIdLieu()+"', `numFormation`='"+getNumFormation()+"', `nbPlaces`='"+getTxtNbPlaces()+"'  WHERE `numSession`='"+getComboNumSess()+"'");
 				// mis à jour du tableau 
 				BDD.executeSelect("SELECT * FROM `session`");
 				tableSessions.setModel(DbUtils.resultSetToTableModel(BDD.getRs()));	
@@ -213,21 +250,53 @@ public class Sessions extends JFrame {
 		//ajout d'un actionListener sur le boutton insert
 		btnInsertSess.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				//insertion des champs dans la table sessions
-				BDD.executeUpdate("INSERT INTO `session`( `dateLimiteInsc`, `dateSession`, `dateDeFin`, `idIntervenant`, `idLieu`, `numFormation`) VALUES ('"+getTxtDateLimit()+"','"+getTxtDateSess()+"','"+getDateDeFin()+"','"+getIdIntervenant()+"','"+getTxtIdLieu()+"','"+Formation.getTxtNumFormation()+"');");
+				BDD.executeUpdate("INSERT INTO `session`( `numSession`, `dateLimiteInsc`, `dateSession`, `dateDeFin`, `idIntervenant`, `idLieu`, `numFormation`, `nbPlaces`) VALUES (NULL, '"+getDateLimit()+"','"+getDateSess()+"','"+getDateDeFin()+"','"+getIdIntervenant()+"','"+getIdLieu()+"','"+getNumFormation()+"','"+getTxtNbPlaces()+"');");
 				// mis à jour des tableaux
 				BDD.executeSelect("SELECT * FROM `session`");
 				tableSessions.setModel(DbUtils.resultSetToTableModel(BDD.getRs()));
+
+				//mis à jour des Jcombobox
+				comboNumSess.removeAllItems();
+				comboIdInter.removeAllItems();
+				comboIdLieu.removeAllItems();
+				comboNumForma.removeAllItems();
+				try {
+
+					BDD.executeSelect("SELECT `numSession` FROM `session`");
+					while (BDD.getRs().next()) {  
+						comboNumSess.addItem(Integer.toString(BDD.getRs().getInt("numSession")));  
+					}
+
+					BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
+					while (BDD.getRs().next()) {  
+						comboIdInter.addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
+					}
+
+					BDD.executeSelect("SELECT `idLieu` FROM `lieu`");
+					while (BDD.getRs().next()) {  
+						comboIdLieu.addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
+					}
+
+					BDD.executeSelect("SELECT `numFormation` FROM `formation`");
+					while (BDD.getRs().next()) {  
+						comboNumForma.addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
+					}
+
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 
 		//action du boutton précédent
 		btnPrecedent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				//passage au frame lieu
-				Lieu.getFrameLieu().setVisible(true);
+
+				//passage au frame formation
+				Formation.getFrameFormation().setVisible(true);
 				sessionsFrame.setVisible(false);
 			}
 		});
@@ -235,44 +304,60 @@ public class Sessions extends JFrame {
 	}
 
 	//getters
-	public String getNumSession() {
-
-		return txtNumSession.getText();
+	public String getStringNumSess() {
+		return comboNumSess.getSelectedItem().toString();
 	}
-
-	public String getTxtDateLimit() {
-
+	
+	public String getDateLimit() {
 		return txtDateDeLimite.getText();
 	}
 
-	public String getTxtDateSess() {
-
+	public String getDateSess() {
 		return txtDateSess.getText();
 	}
 
 	public String getDateDeFin() {
-
 		return txtDateDeFin.getText();
 	}
 
-	public String getTxtIdLieu() {
-
-		return txtIdLieu.getText();
+	public String getIdLieu() {
+		return comboIdLieu.getSelectedItem().toString();
 	}
 
 	public String getIdIntervenant() {
+		return comboIdInter.getSelectedItem().toString();
+	}
 
-		return txtIdIntervenant.getText();
+	public String getNumFormation() {
+		return comboNumForma.getSelectedItem().toString();
+	}
+
+	public String getTxtNbPlaces() {
+		return txtNbPlaces.getText();
 	}
 
 	public static JFrame getSessionsFrame() {
-
 		return sessionsFrame;
 	}
 
 	public static JTable getJTableSess() {
-
 		return tableSessions;
+	}
+
+	public static JComboBox<String> getComboIdInter() {
+		return comboIdInter;
+	}
+
+	public static JComboBox<String> getComboIdLieu() {
+		return comboIdLieu;
+	}
+
+	public static JComboBox<String> getComboNumForma() {
+		return comboNumForma;
+	}
+
+	public static JComboBox<String> getComboNumSess() {
+		return comboNumSess;
 	}
 
 }

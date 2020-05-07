@@ -1,4 +1,4 @@
-package formationAdmin;
+package gestionFormation;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,10 +7,23 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class BDD {
-	
+
 	private Connection cnx;
 	private static Statement stmt;
 	private static ResultSet rs;
+
+	//constructeur
+	public BDD() {
+
+		// Charger le driver JBDC
+		chargerDriver("com.mysql.jdbc.Driver");
+
+		// Connexion à la BDD
+		connexionBdd("mysql://localhost/", "formations", "root", "");
+
+		// Creation d'ub statement
+		creerStatement();
+	}
 
 	//Recherche et chargement du driver approprié à la BDD
 	public void chargerDriver(String pilote) {
@@ -18,11 +31,11 @@ public class BDD {
 		// Chargement du Driver (pilote)
 		try {
 			Class.forName(pilote);
-			System.out.println("Driver trouvé!!!");
+			System.out.println("Driver trouvé!");
 		}
 		catch (ClassNotFoundException e) {
 
-			System.out.println("Driver non trouvé!!!");
+			Connexion.affichagePopUp("Driver non trouvé!");
 			e.printStackTrace();
 		}
 	}
@@ -49,11 +62,11 @@ public class BDD {
 			stmt = cnx.createStatement();
 		} 
 		catch (SQLException e) {
-			Login.affichagePopUp("Problème création statement!!");
+			Connexion.affichagePopUp("Problème création statement!!");
 			e.printStackTrace();
 		}
 	}
-	
+
 	//permet de faire une requete SELECT
 	public static void executeSelect(String requete) {
 		try {
@@ -61,23 +74,33 @@ public class BDD {
 
 		} catch (SQLException e) {
 
-			Login.affichagePopUp("Probleme requete SELECT non executée !!");
+			Connexion.affichagePopUp("Probleme requete SELECT non executée !!");
 			e.printStackTrace();
 		}
 	}
-	
+
 	//permet de faire une requête INSERT, UPDATE et DELETE
 	public static void executeUpdate(String requete) {
 		try {
 			stmt.executeUpdate(requete);
-			Login.affichagePopUp("Requete UPDATE éxécutée !!");
+			Connexion.affichagePopUp("Mis à jour réussie!");
+
 		} catch (SQLException e) {
 
-			Login.affichagePopUp("Problème requete UPDATE non executée !!");
+			//exceptions liées à une supression d'un champ lié à une clef étrangère
+			String errorDeleteForeignKey ="com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException";
+
+			if (e.toString().contains(errorDeleteForeignKey)){
+				Connexion.affichagePopUp("Supprimer la SESSION liée AVANT!");
+
+			} else {
+				Connexion.affichagePopUp("Ajout/Modification NON effectuée!!");
+
+			}
 			e.printStackTrace();
 		}
 	}
-	
+
 	//permet de retourner vrai si une table est renvoyée après une requête
 	public static boolean recupererResultatsRequete() throws SQLException {
 
@@ -87,15 +110,14 @@ public class BDD {
 			count = count +1;
 		}
 		if (count==1){
-
 			return true;
 		}
+		
 		return false;
 	}
 
 	// getter Rs
 	public static ResultSet getRs() {
-
 		return rs;
 	}
 

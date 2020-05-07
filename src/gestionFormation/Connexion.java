@@ -1,4 +1,4 @@
-package formationAdmin;
+package gestionFormation;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 
-public class Login {
+public class Connexion {
 
 	// Frame
 	private static JFrame frameLogin = new JFrame();
@@ -29,7 +29,7 @@ public class Login {
 	private JTextField txtPassword = new JPasswordField();
 
 	// Constructeur
-	public Login() {
+	public Connexion() {
 
 		//paramétrage graphique du jtextfield Password
 		txtPassword.setBounds(143, 139, 123, 20);
@@ -66,21 +66,21 @@ public class Login {
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				// Requête qui va chercher un utilisateur qui possède un libelle admin
-				BDD.executeSelect("SELECT * FROM status INNER JOIN utilisateur GROUP BY status.idUtilisateur = utilisateur.idUtilisateur and `mail`='"+getTxtMail()+"' and 'password'='"+getTxtPassword()+"' and `libelle`='admin'");
-
+				// Requête qui va filtrer dans la BDD un mail, un password et un libelle 
+				BDD.executeSelect("SELECT * FROM  `utilisateur`, `status` WHERE `mail`='"+getTxtMail()+"' AND `password`='"+getTxtPassword()+"' AND status.idUtilisateur = utilisateur.idUtilisateur AND `libelle`= 'admin'");
+			
 				// si la requête renvoie vraie alors la connexion se fait
 				try {
 					if(BDD.recupererResultatsRequete() == true) {
 
 						//affichage de l'acceuil
-						Login.getFrameLogin().setVisible(false);
+						Connexion.getFrameLogin().setVisible(false);
 						Acceuil.getFrameAcceuil().setVisible(true);
 
 					} else {
 						
 						//sinon pop up qui indique une erreur
-						Login.affichagePopUp("Mail ou MDP incorrect!");
+						Connexion.affichagePopUp("MAIL ou MDP incorrect!");
 					}
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
@@ -93,23 +93,19 @@ public class Login {
 
 	// méthode qui permet d'afficher un pop up
 	public static void affichagePopUp(String message){
-
 		JOptionPane.showMessageDialog(frameLogin, message);
 	}
 
 	// les getters 
 	public String getTxtPassword() {
-
 		return txtPassword.getText();
 	}
 
 	public String getTxtMail() {
-
 		return txtUsername.getText();
 	}
 
 	public static JFrame getFrameLogin() {
-
 		return frameLogin;
 	}
 

@@ -1,4 +1,4 @@
-package formationAdmin;
+package gestionFormation;
 
 import javax.swing.JFrame;
 
@@ -6,6 +6,7 @@ import net.proteanit.sql.DbUtils;
 
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
@@ -17,11 +18,10 @@ public class Acceuil {
 
 	//bouttons
 	private JButton btnLogout = new JButton("Déconnexion");
-	private JButton btnAjout = new JButton("Ajout");
+	private JButton btnAjoutModif = new JButton("Ajout/Modification");
 
 	//panel
-	private final JPanel panelGestionForma = new JPanel();
-	private final JButton btnModifiersupprimer = new JButton("Modifier/Supprimer");
+	private JPanel panelGestionForma = new JPanel();
 
 	//constructeur
 	public Acceuil() {
@@ -31,27 +31,23 @@ public class Acceuil {
 		frameAcceuil.setBounds(100, 100, 436, 287);
 		frameAcceuil.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frameAcceuil.getContentPane().setLayout(null);
-		panelGestionForma.setBorder(new TitledBorder(null, "GESTION DES FORMATIONS", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelGestionForma.setBounds(80, 76, 240, 104);
-
+		
+		//paramétrage du panel 
+		panelGestionForma.setBorder(new TitledBorder(null, "GESTIONNAIRE DE FORMATION", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panelGestionForma.setBounds(84, 94, 240, 56);
 		frameAcceuil.getContentPane().add(panelGestionForma);
 		panelGestionForma.setLayout(null);
 
 		//paramétrage graphique du boutton ajout/modification
-		btnAjout.setBounds(6, 16, 228, 30);
-		panelGestionForma.add(btnAjout);
-
-		//paramétrage graphique du boutton modifier/supprimer
-		btnModifiersupprimer.setBounds(6, 57, 228, 30);
-		panelGestionForma.add(btnModifiersupprimer);
+		btnAjoutModif.setBounds(6, 16, 228, 30);
+		panelGestionForma.add(btnAjoutModif);
 
 		//paramétrage graphique du boutton Déconnexion
 		btnLogout.setBounds(296, 11, 114, 23);
 		frameAcceuil.getContentPane().add(btnLogout);
 
-
-		//action listener du boutton modifier supprimer
-		btnModifiersupprimer.addActionListener(new ActionListener() {
+		//action du boutton ajout/modification
+		btnAjoutModif.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
 				//passage à la frame intervenants
@@ -61,20 +57,20 @@ public class Acceuil {
 				//requete qui va itialiser le tableau des intervenants
 				BDD.executeSelect("SELECT * FROM `intervenant`");
 				Intervenant.getTableInter().setModel(DbUtils.resultSetToTableModel(BDD.getRs()));
-			}
-		});
-
-		//action du boutton ajout
-		btnAjout.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				//passage à la frame intervenants
-				frameAcceuil.setVisible(false);
-				Intervenant.getInterFrame().setVisible(true);
-
-				//requete qui va itialiser le tableau des intervenants
-				BDD.executeSelect("SELECT * FROM `intervenant`");
-				Intervenant.getTableInter().setModel(DbUtils.resultSetToTableModel(BDD.getRs()));
+				
+				//mis à jour du jcombobox
+				Intervenant.getComboIdInter().removeAllItems();
+				try {
+					BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
+					while (BDD.getRs().next()) {  
+						Intervenant.getComboIdInter().addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
+					 }
+				
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			
 			}
 		});
 
@@ -83,7 +79,7 @@ public class Acceuil {
 			public void actionPerformed(ActionEvent e) {
 
 				//passage à la fenetre login
-				Login.getFrameLogin().setVisible(true);
+				Connexion.getFrameLogin().setVisible(true);
 				frameAcceuil.setVisible(false);
 			}
 		});
@@ -92,7 +88,6 @@ public class Acceuil {
 
 	//getter
 	public static JFrame getFrameAcceuil() {
-
 		return frameAcceuil;
 	}
 }
