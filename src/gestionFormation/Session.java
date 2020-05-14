@@ -6,19 +6,16 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
-import net.proteanit.sql.DbUtils;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
-
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import javax.swing.JComboBox;
 
-public class Session extends JFrame {
+public class Session extends JFrame implements ActionListener {
 
 	/**
 	 * 
@@ -41,10 +38,10 @@ public class Session extends JFrame {
 	private JTextField txtNbPlaces = new JTextField();
 
 	//bouttons
-	private JButton btnUpdateSess = new JButton("Modifier");
-	private JButton btnInsertSess = new JButton("Insérer");
-	private JButton btnAcceuil = new JButton("Retourner à l'acceuil");
-	private JButton btnDeleteSess = new JButton("Supprimer");
+	private JButton btnUpdate = new JButton("Modifier");
+	private JButton btnInsert = new JButton("Insérer");
+	private JButton btnAccueil = new JButton("Retourner à l'acceuil");
+	private JButton btnDelete = new JButton("Supprimer");
 	private JButton btnPrecedent = new JButton("Précédent");
 
 	//labels
@@ -87,16 +84,16 @@ public class Session extends JFrame {
 		scrollPanSess.setRowHeaderView(scrollBarSess);
 
 		//paramétrage graphique du boutton insérer
-		btnInsertSess.setBounds(661, 68, 155, 23);
-		panel_sessions.add(btnInsertSess);
+		btnInsert.setBounds(661, 68, 155, 23);
+		panel_sessions.add(btnInsert);
 
 		//paramétrage graphique du boutton modifier
-		btnUpdateSess.setBounds(661, 102, 155, 23);
-		panel_sessions.add(btnUpdateSess);
+		btnUpdate.setBounds(661, 102, 155, 23);
+		panel_sessions.add(btnUpdate);
 
 		//paramétrage graphique du boutton supprimer
-		btnDeleteSess.setBounds(661, 136, 155, 23);
-		panel_sessions.add(btnDeleteSess);
+		btnDelete.setBounds(661, 136, 155, 23);
+		panel_sessions.add(btnDelete);
 
 		//paramétrage graphique du label numSession
 		lblNumSession.setBounds(20, 23, 86, 14);
@@ -126,8 +123,8 @@ public class Session extends JFrame {
 		txtDateDeFin.setColumns(10);
 
 		//paramétrage graphique du boutton acceuil
-		btnAcceuil.setBounds(536, 346, 260, 23);
-		sessionsFrame.getContentPane().add(btnAcceuil);
+		btnAccueil.setBounds(536, 346, 260, 23);
+		sessionsFrame.getContentPane().add(btnAccueil);
 
 		//paramétrage graphique du label idLieu
 		lblIdLieuSess.setBounds(513, 23, 65, 14);
@@ -173,165 +170,173 @@ public class Session extends JFrame {
 		comboNumSess.setBounds(10, 35, 96, 22);
 		sessionsFrame.getContentPane().add(comboNumSess);
 
-		//ajout des collonnes au tableau sessions
-		tableSessions.setModel(new DefaultTableModel(
-				new Object[][] {
-				},
-				new String[] {
-						"numSession", "dateLimiteInsc", "dateSession", "dateDeFin", "idIntervenant", "idLieu","numFormation", "nbPlaces"
-				}
-				));
-
 		//ajout d'un actionListener sur le boutton retourner à l'acceuil
-		btnAcceuil.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				//passage au frame acceuil
-				Acceuil.getFrameAcceuil().setVisible(true);
-				sessionsFrame.setVisible(false);		
-			}
-		});
+		btnAccueil.addActionListener(this);
 
 		//ajout d'un actionListener sur le boutton Delete
-		btnDeleteSess.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				//requete qui supprime les champs dont la numSession correspond
-				BDD.executeUpdate("DELETE FROM `session` WHERE `numSession`="+getStringNumSess());
-				BDD.executeSelect("SELECT * FROM `session`");
-				tableSessions.setModel(DbUtils.resultSetToTableModel(BDD.getRs()));	
-
-				//mis à jour des Jcombobox
-				comboNumSess.removeAllItems();
-				comboIdInter.removeAllItems();
-				comboIdLieu.removeAllItems();
-				comboNumForma.removeAllItems();
-				try {
-
-					BDD.executeSelect("SELECT `numSession` FROM `session`");
-					while (BDD.getRs().next()) {  
-						comboNumSess.addItem(Integer.toString(BDD.getRs().getInt("numSession")));  
-					}
-
-					BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
-					while (BDD.getRs().next()) {  
-						comboIdInter.addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
-					}
-
-					BDD.executeSelect("SELECT `idLieu` FROM `lieu`");
-					while (BDD.getRs().next()) {  
-						comboIdLieu.addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
-					}
-
-					BDD.executeSelect("SELECT `numFormation` FROM `formation`");
-					while (BDD.getRs().next()) {  
-						comboNumForma.addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
-					}
-
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
+		btnDelete.addActionListener(this);
 
 		//ajout d'un actionListener sur le boutton Update
-		btnUpdateSess.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				//requete qui met à jour les informations
-				BDD.executeUpdate("UPDATE `session` SET `dateLimiteinsc`='"+getDateLimit()+"', `dateSession`='"+getDateSess()+"', `dateDeFin`='"+getDateDeFin()+"', `idIntervenant`='"+getIdIntervenant()+"',`idLieu`='"+getIdLieu()+"', `numFormation`='"+getNumFormation()+"', `nbPlaces`='"+getTxtNbPlaces()+"'  WHERE `numSession`='"+getStringNumSess()+"'");
-				// mis à jour du tableau 
-				BDD.executeSelect("SELECT * FROM `session`");
-				tableSessions.setModel(DbUtils.resultSetToTableModel(BDD.getRs()));	
-
-				//mis à jour des Jcombobox
-				comboNumSess.removeAllItems();
-				comboIdInter.removeAllItems();
-				comboIdLieu.removeAllItems();
-				comboNumForma.removeAllItems();
-				try {
-
-					BDD.executeSelect("SELECT `numSession` FROM `session`");
-					while (BDD.getRs().next()) {  
-						comboNumSess.addItem(Integer.toString(BDD.getRs().getInt("numSession")));  
-					}
-
-					BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
-					while (BDD.getRs().next()) {  
-						comboIdInter.addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
-					}
-
-					BDD.executeSelect("SELECT `idLieu` FROM `lieu`");
-					while (BDD.getRs().next()) {  
-						comboIdLieu.addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
-					}
-
-					BDD.executeSelect("SELECT `numFormation` FROM `formation`");
-					while (BDD.getRs().next()) {  
-						comboNumForma.addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
-					}
-
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
+		btnUpdate.addActionListener(this);
 
 		//ajout d'un actionListener sur le boutton insert
-		btnInsertSess.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				//insertion des champs dans la table sessions
-				BDD.executeUpdate("INSERT INTO `session`( `numSession`, `dateLimiteInsc`, `dateSession`, `dateDeFin`, `idIntervenant`, `idLieu`, `numFormation`, `nbPlaces`) VALUES (NULL, '"+getDateLimit()+"','"+getDateSess()+"','"+getDateDeFin()+"','"+getIdIntervenant()+"','"+getIdLieu()+"','"+getNumFormation()+"','"+getTxtNbPlaces()+"');");
-				// mis à jour des tableaux
-				BDD.executeSelect("SELECT * FROM `session`");
-				tableSessions.setModel(DbUtils.resultSetToTableModel(BDD.getRs()));
-
-				//mis à jour des Jcombobox
-				comboNumSess.removeAllItems();
-				comboIdInter.removeAllItems();
-				comboIdLieu.removeAllItems();
-				comboNumForma.removeAllItems();
-				try {
-
-					BDD.executeSelect("SELECT `numSession` FROM `session`");
-					while (BDD.getRs().next()) {  
-						comboNumSess.addItem(Integer.toString(BDD.getRs().getInt("numSession")));  
-					}
-
-					BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
-					while (BDD.getRs().next()) {  
-						comboIdInter.addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
-					}
-
-					BDD.executeSelect("SELECT `idLieu` FROM `lieu`");
-					while (BDD.getRs().next()) {  
-						comboIdLieu.addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
-					}
-
-					BDD.executeSelect("SELECT `numFormation` FROM `formation`");
-					while (BDD.getRs().next()) {  
-						comboNumForma.addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
-					}
-
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
+		btnInsert.addActionListener(this);
 
 		//action du boutton précédent
-		btnPrecedent.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		btnPrecedent.addActionListener(this);
 
-				//passage au frame formation
-				Formation.getFrameFormation().setVisible(true);
-				sessionsFrame.setVisible(false);
+	}
+
+	//action réalisées sur les bouttons
+	public void actionPerformed(ActionEvent event) {
+
+		if(event.getSource() == btnDelete) {
+			
+			//requete qui supprime les champs dont la numSession correspond
+			BDD.executeUpdate("DELETE FROM `session` WHERE `numSession`="+getStringNumSess());
+			BDD.executeSelect("SELECT * FROM `session`");
+
+			try {
+				tableSessions.setModel(BDD.buildTableModel(BDD.getRs()));
+			} catch (SQLException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}	
+
+			//mis à jour des Jcombobox
+			comboNumSess.removeAllItems();
+			comboIdInter.removeAllItems();
+			comboIdLieu.removeAllItems();
+			comboNumForma.removeAllItems();
+			try {
+
+				BDD.executeSelect("SELECT `numSession` FROM `session`");
+				while (BDD.getRs().next()) {  
+					comboNumSess.addItem(Integer.toString(BDD.getRs().getInt("numSession")));  
+				}
+
+				BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
+				while (BDD.getRs().next()) {  
+					comboIdInter.addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
+				}
+
+				BDD.executeSelect("SELECT `idLieu` FROM `lieu`");
+				while (BDD.getRs().next()) {  
+					comboIdLieu.addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
+				}
+
+				BDD.executeSelect("SELECT `numFormation` FROM `formation`");
+				while (BDD.getRs().next()) {  
+					comboNumForma.addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
+				}
+
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
-		});
+			
+		} else if(event.getSource() == btnUpdate) {
+			
+			//requete qui met à jour les informations
+			BDD.executeUpdate("UPDATE `session` SET `dateLimiteinsc`='"+getDateLimit()+"', `dateSession`='"+getDateSess()+"', `dateDeFin`='"+getDateDeFin()+"', `idIntervenant`='"+getIdIntervenant()+"',`idLieu`='"+getIdLieu()+"', `numFormation`='"+getNumFormation()+"', `nbPlaces`='"+getTxtNbPlaces()+"'  WHERE `numSession`='"+getStringNumSess()+"'");
+			// mis à jour du tableau 
+			BDD.executeSelect("SELECT * FROM `session`");
+
+			try {
+				tableSessions.setModel(BDD.buildTableModel(BDD.getRs()));
+			} catch (SQLException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}	
+
+			//mis à jour des Jcombobox
+			comboNumSess.removeAllItems();
+			comboIdInter.removeAllItems();
+			comboIdLieu.removeAllItems();
+			comboNumForma.removeAllItems();
+			try {
+
+				BDD.executeSelect("SELECT `numSession` FROM `session`");
+				while (BDD.getRs().next()) {  
+					comboNumSess.addItem(Integer.toString(BDD.getRs().getInt("numSession")));  
+				}
+
+				BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
+				while (BDD.getRs().next()) {  
+					comboIdInter.addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
+				}
+
+				BDD.executeSelect("SELECT `idLieu` FROM `lieu`");
+				while (BDD.getRs().next()) {  
+					comboIdLieu.addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
+				}
+
+				BDD.executeSelect("SELECT `numFormation` FROM `formation`");
+				while (BDD.getRs().next()) {  
+					comboNumForma.addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
+				}
+
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}} else if(event.getSource() == btnInsert) {
+
+			//insertion des champs dans la table sessions
+			BDD.executeUpdate("INSERT INTO `session`( `numSession`, `dateLimiteInsc`, `dateSession`, `dateDeFin`, `idIntervenant`, `idLieu`, `numFormation`, `nbPlaces`) VALUES (NULL, '"+getDateLimit()+"','"+getDateSess()+"','"+getDateDeFin()+"','"+getIdIntervenant()+"','"+getIdLieu()+"','"+getNumFormation()+"','"+getTxtNbPlaces()+"');");
+			// mis à jour des tableaux
+			BDD.executeSelect("SELECT * FROM `session`");
+
+			try {
+				tableSessions.setModel(BDD.buildTableModel(BDD.getRs()));
+			} catch (SQLException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+
+			//mis à jour des Jcombobox
+			comboNumSess.removeAllItems();
+			comboIdInter.removeAllItems();
+			comboIdLieu.removeAllItems();
+			comboNumForma.removeAllItems();
+			try {
+
+				BDD.executeSelect("SELECT `numSession` FROM `session`");
+				while (BDD.getRs().next()) {  
+					comboNumSess.addItem(Integer.toString(BDD.getRs().getInt("numSession")));  
+				}
+
+				BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
+				while (BDD.getRs().next()) {  
+					comboIdInter.addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
+				}
+
+				BDD.executeSelect("SELECT `idLieu` FROM `lieu`");
+				while (BDD.getRs().next()) {  
+					comboIdLieu.addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
+				}
+
+				BDD.executeSelect("SELECT `numFormation` FROM `formation`");
+				while (BDD.getRs().next()) {  
+					comboNumForma.addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
+				}
+
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+		} else if(event.getSource() == btnAccueil) {
+
+			//passage au frame acceuil
+			Acceuil.getFrameAcceuil().setVisible(true);
+			sessionsFrame.setVisible(false);
+
+		} else if(event.getSource() == btnPrecedent) {
+
+			//passage au frame formation
+			Formation.getFrameFormation().setVisible(true);
+			sessionsFrame.setVisible(false);
+		}
 
 	}
 

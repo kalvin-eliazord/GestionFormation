@@ -1,9 +1,6 @@
 package gestionFormation;
 
 import javax.swing.JFrame;
-
-import net.proteanit.sql.DbUtils;
-
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -11,7 +8,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
-public class Acceuil {
+public class Acceuil implements ActionListener {
 
 	//frame
 	private static JFrame  frameAcceuil = new JFrame();
@@ -46,44 +43,52 @@ public class Acceuil {
 		btnLogout.setBounds(296, 11, 114, 23);
 		frameAcceuil.getContentPane().add(btnLogout);
 
-		//action du boutton ajout/modification
-		btnAjoutModif.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		//ajout d'un listener sur le boutton ajout/modification
+		btnAjoutModif.addActionListener(this);
 
-				//passage à la frame intervenants
-				frameAcceuil.setVisible(false);
-				Intervenant.getInterFrame().setVisible(true);
+		//ajout d'un listener sur le boutton Déconnexion
+		btnLogout.addActionListener(this); 
 
-				//requete qui va itialiser le tableau des intervenants
-				BDD.executeSelect("SELECT * FROM `intervenant`");
-				Intervenant.getTableInter().setModel(DbUtils.resultSetToTableModel(BDD.getRs()));
+	}
+	
+	//action des bouttons
+	public void actionPerformed(ActionEvent event) {
 
-				//mis à jour du jcombobox
-				Intervenant.getComboIdInter().removeAllItems();
-				try {
-					BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
-					while (BDD.getRs().next()) {  
-						Intervenant.getComboIdInter().addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
-					}
+		if(event.getSource() == btnLogout) {
+			//passage à la fenetre login
+			Connexion.getFrameLogin().setVisible(true);
+			frameAcceuil.setVisible(false);
 
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+		} else if(event.getSource() == btnAjoutModif) {
+
+			//passage à la frame intervenants
+			frameAcceuil.setVisible(false);
+			Intervenant.getInterFrame().setVisible(true);
+
+			//requete qui va itialiser le tableau des intervenants
+			BDD.executeSelect("SELECT * FROM `intervenant`");
+
+			try {
+				Intervenant.getTableInter().setModel(BDD.buildTableModel(BDD.getRs()));
+			} catch (SQLException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+
+			//mis à jour du jcombobox
+			Intervenant.getComboIdInter().removeAllItems();
+			try {
+				BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
+				while (BDD.getRs().next()) {  
+					Intervenant.getComboIdInter().addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
 				}
 
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
-		});
 
-		//paramétrage de l'action du boutton Déconnexion
-		btnLogout.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				//passage à la fenetre login
-				Connexion.getFrameLogin().setVisible(true);
-				frameAcceuil.setVisible(false);
-			}
-		});
-
+		}
 	}
 
 	//getter

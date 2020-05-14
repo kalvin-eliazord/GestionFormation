@@ -6,26 +6,17 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
-
-import net.proteanit.sql.DbUtils;
-
 import javax.swing.JButton;
-
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
-
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
 
-public class Formation extends JFrame {
+public class Formation extends JFrame implements ActionListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	//frame
@@ -43,7 +34,7 @@ public class Formation extends JFrame {
 	//bouttons
 	private JButton btnUpdate = new JButton("Modifier");
 	private JButton btnInsert = new JButton("Insérer");
-	private JButton btnAcceuil = new JButton("Acceuil");
+	private JButton btnAccueil = new JButton("Acceuil");
 	private JButton btnDelete = new JButton("Supprimer");
 	private JButton btnPrecedent = new JButton("Précédent");
 	private JButton btnSuivant = new JButton("Suivant");
@@ -72,7 +63,7 @@ public class Formation extends JFrame {
 		frameFormation.getContentPane().add(panelFormation);
 		panelFormation.setLayout(null);
 
-		//// paramétrage du scrollpane et du scrollbar
+		// paramétrage du scrollpane et du scrollbar
 		scrollPane.setBounds(6, 16, 494, 250);
 		panelFormation.add(scrollPane);
 		scrollPane.setViewportView(jTableFormation);
@@ -114,8 +105,8 @@ public class Formation extends JFrame {
 		txtCouts.setColumns(10);
 
 		//paramétrage graphique du boutton Retour à l'acceuil
-		btnAcceuil.setBounds(263, 391, 188, 23);
-		frameFormation.getContentPane().add(btnAcceuil);
+		btnAccueil.setBounds(263, 391, 188, 23);
+		frameFormation.getContentPane().add(btnAccueil);
 
 		//paramétrage graphique du boutton précédent
 		btnPrecedent.setBounds(10, 391, 188, 23);
@@ -129,135 +120,154 @@ public class Formation extends JFrame {
 		comboNumForma.setBounds(35, 55, 119, 22);
 		frameFormation.getContentPane().add(comboNumForma);
 
-		//initialisation des collonnes du tableau 
-		jTableFormation.setModel(new DefaultTableModel(
-				new Object[][] {},
-				new String[] {"numFormation", "nbPlaces", "objectif", "couts"} ));
-
 		// action du boutton insérer
-		btnInsert.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				//requete qui va insérer dans la table formation
-				BDD.executeUpdate("INSERT INTO `formation`( `objectif`, `couts`) VALUES ('"+getTxtObjectif()+"',"+getTxtCouts()+")");	
-				// mis à jour du tableau formation
-				BDD.executeSelect("SELECT * FROM `formation`");
-				jTableFormation.setModel(DbUtils.resultSetToTableModel(BDD.getRs()));
-
-				//mis à jour du jcombobox numFormation
-				comboNumForma.removeAllItems();
-				try {
-					BDD.executeSelect("SELECT `numFormation` FROM `formation`");
-					while (BDD.getRs().next()) {  
-						Formation.getComboNumForma().addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
-					}
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
+		btnInsert.addActionListener(this);
 
 		//action boutton modifier
-		btnUpdate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				//requete qui met à jour les informations dont le numFormation correspond
-				BDD.executeUpdate("UPDATE `formation` SET `numFormation`="+getNumFormation()+", `objectif`='"+getTxtObjectif()+"', `couts`="+getTxtCouts()+" WHERE `numFormation`="+getNumFormation());
-				// mis à jour du tableau formation
-				BDD.executeSelect("SELECT * FROM `formation`");
-				getJTableFor().setModel(DbUtils.resultSetToTableModel(BDD.getRs()));
-			}
-		});
+		btnUpdate.addActionListener(this);
 
 		//action du boutton supprimer
-		btnDelete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				//requete qui supprime les informations dont le numFormation correspond
-				BDD.executeUpdate("DELETE FROM `formation` WHERE `numFormation`="+getNumFormation());
-				// mis à jour du tableau formation
-				BDD.executeSelect("SELECT * FROM `formation`");
-				getJTableFor().setModel(DbUtils.resultSetToTableModel(BDD.getRs()));
-
-				//mis à jour du jcombobox numFormation
-				comboNumForma.removeAllItems();
-				try {
-					BDD.executeSelect("SELECT `numFormation` FROM `formation`");
-					while (BDD.getRs().next()) {  
-						comboNumForma.addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
-					}
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
+		btnDelete.addActionListener(this);
 
 		//action du boutton acceuil
-		btnAcceuil.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				//retour à l'accueil
-				Acceuil.getFrameAcceuil().setVisible(true);
-				Formation.getFrameFormation().setVisible(false);
-			}
-		});
+		btnAccueil.addActionListener(this);
 
 		// action du bouton précédent
-		btnPrecedent.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				frameFormation.setVisible(false);
-				Lieu.getFrameLieu().setVisible(true);
-			}
-		});
+		btnPrecedent.addActionListener(this);
 
 		//action listener btn suivant
-		btnSuivant.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		btnSuivant.addActionListener(this);
 
-				//rend visible l'ihm session
-				frameFormation.setVisible(false);
-				Session.getSessionsFrame().setVisible(true);
+	}
 
-				//mis à jour du tableau session
-				BDD.executeSelect("SELECT * FROM `session`");
-				Session.getJTableSess().setModel(DbUtils.resultSetToTableModel(BDD.getRs()));
+	//action réalisées sur les bouttons
+	public void actionPerformed(ActionEvent event) {
 
-				//mis à jour des Jcombobox
-				Session.getComboNumSess().removeAllItems();
-				Session.getComboIdInter().removeAllItems();
-				Session.getComboIdLieu().removeAllItems();
-				Session.getComboNumForma().removeAllItems();
-				try {
+		if(event.getSource() == btnDelete) {
 
-					BDD.executeSelect("SELECT `numSession` FROM `session`");
-					while (BDD.getRs().next()) {  
-						Session.getComboNumSess().addItem(Integer.toString(BDD.getRs().getInt("numSession")));  
-					}
-
-					BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
-					while (BDD.getRs().next()) {  
-						Session.getComboIdInter().addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
-					}
-
-					BDD.executeSelect("SELECT `idLieu` FROM `lieu`");
-					while (BDD.getRs().next()) {  
-						Session.getComboIdLieu().addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
-					}
-
-					BDD.executeSelect("SELECT `numFormation` FROM `formation`");
-					while (BDD.getRs().next()) {  
-						Session.getComboNumForma().addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
-					}
-
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+			//requete qui supprime les informations dont le numFormation correspond
+			BDD.executeUpdate("DELETE FROM `formation` WHERE `numFormation`="+getNumFormation());
+			// mis à jour du tableau formation
+			BDD.executeSelect("SELECT * FROM `formation`");
+			
+			try {
+				getJTableFor().setModel(BDD.buildTableModel(BDD.getRs()));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		});
+
+			//mis à jour du jcombobox numFormation
+			comboNumForma.removeAllItems();
+			try {
+				BDD.executeSelect("SELECT `numFormation` FROM `formation`");
+				while (BDD.getRs().next()) {  
+					comboNumForma.addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
+				}
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+		} else if (event.getSource() == btnSuivant) {
+
+			//rend visible l'ihm session
+			frameFormation.setVisible(false);
+			Session.getSessionsFrame().setVisible(true);
+
+			//mis à jour du tableau session
+			BDD.executeSelect("SELECT * FROM `session`");
+			
+			try {
+				Session.getJTableSess().setModel(BDD.buildTableModel(BDD.getRs()));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			//mis à jour des Jcombobox
+			Session.getComboNumSess().removeAllItems();
+			Session.getComboIdInter().removeAllItems();
+			Session.getComboIdLieu().removeAllItems();
+			Session.getComboNumForma().removeAllItems();
+			try {
+
+				BDD.executeSelect("SELECT `numSession` FROM `session`");
+				while (BDD.getRs().next()) {  
+					Session.getComboNumSess().addItem(Integer.toString(BDD.getRs().getInt("numSession")));  
+				}
+
+				BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
+				while (BDD.getRs().next()) {  
+					Session.getComboIdInter().addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
+				}
+
+				BDD.executeSelect("SELECT `idLieu` FROM `lieu`");
+				while (BDD.getRs().next()) {  
+					Session.getComboIdLieu().addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
+				}
+
+				BDD.executeSelect("SELECT `numFormation` FROM `formation`");
+				while (BDD.getRs().next()) {  
+					Session.getComboNumForma().addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
+				}
+
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+		} else if (event.getSource() == btnPrecedent) {
+
+			frameFormation.setVisible(false);
+			Lieu.getFrameLieu().setVisible(true);
+
+		} else if (event.getSource() == btnUpdate) {	
+
+			//requete qui met à jour les informations dont le numFormation correspond
+			BDD.executeUpdate("UPDATE `formation` SET `numFormation`="+getNumFormation()+", `objectif`='"+getTxtObjectif()+"', `couts`="+getTxtCouts()+" WHERE `numFormation`="+getNumFormation());
+			// mis à jour du tableau formation
+			BDD.executeSelect("SELECT * FROM `formation`");
+			
+			try {
+				getJTableFor().setModel(BDD.buildTableModel(BDD.getRs()));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		} else if (event.getSource() == btnInsert) {	
+
+			//requete qui va insérer dans la table formation
+			BDD.executeUpdate("INSERT INTO `formation`( `objectif`, `couts`) VALUES ('"+getTxtObjectif()+"',"+getTxtCouts()+")");	
+			// mis à jour du tableau formation
+			BDD.executeSelect("SELECT * FROM `formation`");
+			
+			try {
+				jTableFormation.setModel(BDD.buildTableModel(BDD.getRs()));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			//mis à jour du jcombobox numFormation
+			comboNumForma.removeAllItems();
+			try {
+				BDD.executeSelect("SELECT `numFormation` FROM `formation`");
+				while (BDD.getRs().next()) {  
+					Formation.getComboNumForma().addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
+				}
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+		} else if (event.getSource() == btnAccueil) {	
+
+			//retour à l'accueil
+			Acceuil.getFrameAcceuil().setVisible(true);
+			Formation.getFrameFormation().setVisible(false);
+		}
 
 	}
 

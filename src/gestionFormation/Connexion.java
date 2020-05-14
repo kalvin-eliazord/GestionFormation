@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 
-public class Connexion {
+public class Connexion implements ActionListener {
 
 	// Frame
 	private static JFrame frameLogin = new JFrame();
@@ -63,32 +63,36 @@ public class Connexion {
 		frameLogin.setVisible(true);
 
 		//action listener du boutton connexion
-		loginButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		loginButton.addActionListener(this);
 
-				// Requête qui va filtrer dans la BDD un mail, un password et un libelle 
-				BDD.executeSelect("SELECT * FROM  `utilisateur`, `status` WHERE `mail`='"+getTxtMail()+"' AND `password`='"+getTxtPassword()+"' AND status.idUtilisateur = utilisateur.idUtilisateur AND `libelle`= 'admin'");
-			
-				// si la requête renvoie vraie alors la connexion se fait
-				try {
-					if(BDD.recupererResultatsRequete() == true) {
+	}
+	
+	public void actionPerformed(ActionEvent event) {
+		//évènement boutton connexion
+		if( event.getSource() == loginButton) {
 
-						//affichage de l'acceuil
-						Connexion.getFrameLogin().setVisible(false);
-						Acceuil.getFrameAcceuil().setVisible(true);
+			// Requête qui va filtrer dans la BDD un mail, un password et un libelle 
+			BDD.executeSelect("SELECT * FROM  `utilisateur`, `status` WHERE `mail`='"+getTxtMail()+"' AND `password`='"+getTxtPassword()+"' AND status.idUtilisateur = utilisateur.idUtilisateur AND `libelle`= 'admin'");
 
-					} else {
-						
-						//sinon pop up qui indique une erreur
-						Connexion.affichagePopUp("MAIL ou MDP incorrect!");
-					}
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+			// si la requête renvoie vraie alors la connexion se fait
+			try {
+				if(BDD.recupererResultatsRequete() == true) {
+
+					//affichage de l'acceuil
+					Connexion.getFrameLogin().setVisible(false);
+					Acceuil.getFrameAcceuil().setVisible(true);
+
+				} else {
+
+					//sinon pop up qui indique une erreur
+					Connexion.affichagePopUp("MAIL ou MDP incorrect!");
 				}
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
-		});
 
+		}
 	}
 
 	// méthode qui permet d'afficher un pop up

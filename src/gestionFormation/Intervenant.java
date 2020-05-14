@@ -6,19 +6,16 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
-import net.proteanit.sql.DbUtils;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
-
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import javax.swing.JComboBox;
 
-public class Intervenant extends JFrame {
+public class Intervenant extends JFrame implements ActionListener {
 
 	/**
 	 * 
@@ -45,7 +42,7 @@ public class Intervenant extends JFrame {
 	private JButton btnInsert = new JButton("Insérer");
 	private JButton btnSuivant = new JButton("Suivant");
 	private JButton btnDelete = new JButton("Supprimer");
-	private JButton btnAcceuil = new JButton("Acceuil");
+	private JButton btnAccueil = new JButton("Acceuil");
 
 	//labels
 	private static JLabel lbIdIntervenant = new JLabel("idIntervenant");
@@ -128,120 +125,134 @@ public class Intervenant extends JFrame {
 		interFrame.getContentPane().add(btnSuivant);
 
 		//paramétrage graphique du boutton acceuil
-		btnAcceuil.setBounds(35, 379, 113, 23);
-		interFrame.getContentPane().add(btnAcceuil);
+		btnAccueil.setBounds(35, 379, 113, 23);
+		interFrame.getContentPane().add(btnAccueil);
 
 		//paramétrage graphique du jcombobox
 		comboIdInter.setBounds(35, 55, 134, 22);
 		interFrame.getContentPane().add(comboIdInter);
 
-		//ajout des noms des colonnes du tableau intervenant
-		tableInter.setModel(new DefaultTableModel(
-				new Object[][] {
-				},
-				new String[] {
-						"idIntervenant", "nom", "prenom", "titre"
-				}
-				));
-
 		//action listener boutton acceuil
-		btnAcceuil.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				//passage au frame acceuil
-				Acceuil.getFrameAcceuil().setVisible(true);
-				interFrame.setVisible(false);
-			}
-		});
+		btnAccueil.addActionListener(this);
 
 		//ajout d'un actionListener sur le boutton suivant
-		btnSuivant.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				//passage à la frame lieu
-				Lieu.getFrameLieu().setVisible(true);	
-				interFrame.setVisible(false);
-
-				//initialisation des champs du tableau lieu
-				BDD.executeSelect("SELECT * FROM `lieu`");	
-				Lieu.getTableLieu().setModel(DbUtils.resultSetToTableModel(BDD.getRs()));
-
-				//mis à jour du jcombobox
-				Lieu.getComboIdLieu().removeAllItems(); //pour empêcher les doublons d'id quand on va naviguer entre les ihm
-					try {
-						BDD.executeSelect("SELECT `idLieu` FROM `lieu`");
-						while (BDD.getRs().next()) {  
-							Lieu.getComboIdLieu().addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
-						}
-						
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-				}
-					
-					
-			}
-		});
+		btnSuivant.addActionListener(this);
 
 		//ajout d'un actionListener sur le boutton insert
-		btnInsert.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				//insertion d'un champ dans la table intervenant
-				BDD.executeUpdate("INSERT INTO `intervenant`( `nom`, `prenom`, `titre`) VALUES ('"+getTxtNom()+"', '"+getTxtPrenom()+"','"+getTxtTitre()+"')");	
-				// mis à jour du tableau intervenants
-				BDD.executeSelect("SELECT * FROM `intervenant`");
-				getTableInter().setModel(DbUtils.resultSetToTableModel(BDD.getRs()));
-
-				//mis à jour du jcombobox
-				comboIdInter.removeAllItems(); // suppresion des item du jcombobox pour éviter les doublons d'id
-				try {
-					BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
-					while (BDD.getRs().next()) {  
-						comboIdInter.addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
-					}
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
+		btnInsert.addActionListener(this);
 
 		//ajout d'un actionListener sur le boutton Update
-		btnUpdate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				//requete qui met à jour les informations dont l'idIntervenant correspond
-				BDD.executeUpdate("UPDATE `intervenant` SET `idIntervenant`="+getStringInter()+",`nom`='"+getTxtNom()+"', `prenom`='"+getTxtPrenom()+"', `titre`='"+getTxtTitre()+"' WHERE `idIntervenant`="+getStringInter());
-				// mis à jour du tableau intervenants
-				BDD.executeSelect("SELECT * FROM `intervenant`");
-				getTableInter().setModel(DbUtils.resultSetToTableModel(BDD.getRs()));	
-			}
-		});
+		btnUpdate.addActionListener(this);
 
 		//ajout d'un actionListener sur le boutton Delete
-		btnDelete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		btnDelete.addActionListener(this);
 
-				//requete qui supprime les champs dont l'idIntervenant correspond
-				BDD.executeUpdate("DELETE FROM `intervenant` WHERE `idIntervenant`="+getStringInter());
-				//modification dynamique du tableau intervenant
-				BDD.executeSelect("SELECT * FROM `intervenant`");
-				getTableInter().setModel(DbUtils.resultSetToTableModel(BDD.getRs()));	
+	}
+	
+	//action réalisées sur les bouttons
+	public void actionPerformed(ActionEvent event) {
 
-				//mis à jour du jcombobox
-				comboIdInter.removeAllItems();
-				try {
-					BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
-					while (BDD.getRs().next()) {  
-						comboIdInter.addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
-					}
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+		if(event.getSource() == btnDelete) {
+
+			//requete qui supprime les champs dont l'idIntervenant correspond
+			BDD.executeUpdate("DELETE FROM `intervenant` WHERE `idIntervenant`="+getStringInter());
+			//modification dynamique du tableau intervenant
+			BDD.executeSelect("SELECT * FROM `intervenant`");
+			
+			try {
+				getTableInter().setModel(BDD.buildTableModel(BDD.getRs()));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+
+			//mis à jour du jcombobox
+			comboIdInter.removeAllItems();
+			try {
+				BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
+				while (BDD.getRs().next()) {  
+					comboIdInter.addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
 				}
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
-		});
+
+		} else if(event.getSource() == btnUpdate) {
+
+			//requete qui met à jour les informations dont l'idIntervenant correspond
+			BDD.executeUpdate("UPDATE `intervenant` SET `idIntervenant`="+getStringInter()+",`nom`='"+getTxtNom()+"', `prenom`='"+getTxtPrenom()+"', `titre`='"+getTxtTitre()+"' WHERE `idIntervenant`="+getStringInter());
+			// mis à jour du tableau intervenants
+			BDD.executeSelect("SELECT * FROM `intervenant`");
+
+			try {
+				getTableInter().setModel(BDD.buildTableModel(BDD.getRs()));
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}	
+
+		} else if(event.getSource() == btnInsert) {
+
+			//insertion d'un champ dans la table intervenant
+			BDD.executeUpdate("INSERT INTO `intervenant`( `nom`, `prenom`, `titre`) VALUES ('"+getTxtNom()+"', '"+getTxtPrenom()+"','"+getTxtTitre()+"')");	
+			// mis à jour du tableau intervenants
+			BDD.executeSelect("SELECT * FROM `intervenant`");
+			
+			try {
+				getTableInter().setModel(BDD.buildTableModel(BDD.getRs()));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			//mis à jour du jcombobox
+			comboIdInter.removeAllItems(); // suppresion des item du jcombobox pour éviter les doublons d'id
+			try {
+				BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
+				while (BDD.getRs().next()) {  
+					comboIdInter.addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
+				}
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+		} else if(event.getSource() == btnSuivant) {
+
+			//passage à la frame lieu
+			Lieu.getFrameLieu().setVisible(true);	
+			interFrame.setVisible(false);
+
+			//initialisation des champs du tableau lieu
+			BDD.executeSelect("SELECT * FROM `lieu`");	
+			
+			try {
+				Lieu.getTableLieu().setModel(BDD.buildTableModel(BDD.getRs()));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			//mis à jour du jcombobox
+			Lieu.getComboIdLieu().removeAllItems(); //pour empêcher les doublons d'id quand on va naviguer entre les ihm
+			try {
+				BDD.executeSelect("SELECT `idLieu` FROM `lieu`");
+				while (BDD.getRs().next()) {  
+					Lieu.getComboIdLieu().addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
+				}
+
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+		} else if(event.getSource() == btnAccueil) {
+
+			//passage au frame acceuil
+			Acceuil.getFrameAcceuil().setVisible(true);
+			interFrame.setVisible(false);
+		}
 
 	}
 

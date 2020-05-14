@@ -3,14 +3,19 @@ package gestionFormation;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Vector;
+
+import javax.swing.table.DefaultTableModel;
 
 public class BDD {
 
 	private Connection cnx;
 	private static Statement stmt;
 	private static ResultSet rs;
+	private static ResultSetMetaData resMeta;
 
 	//constructeur
 	public BDD() {
@@ -49,7 +54,7 @@ public class BDD {
 		}
 		catch (SQLException e) {
 			// TODO Auto-generated catch block
-			Connexion.affichagePopUp("Connexion à la BDD "+ bddName + " échoué!");
+			System.out.println("Problème Connexion BDD "+ bddName + "  !!");
 
 			e.printStackTrace();
 		}
@@ -74,7 +79,7 @@ public class BDD {
 
 		} catch (SQLException e) {
 
-			Connexion.affichagePopUp("Erreur! Requête SELECT non executée !!");
+			Connexion.affichagePopUp("Probleme requete SELECT non executée !!");
 			e.printStackTrace();
 		}
 	}
@@ -87,14 +92,19 @@ public class BDD {
 
 		} catch (SQLException e) {
 
-			//exceptions liées à une supression d'un champ lié à une clef étrangère
+			//exception liée à une supression d'un champ lié à une clef étrangère
 			String errorDeleteForeignKey ="com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException";
-
+			//exception d'une date qui n'est pas rentré dans le bon format
+			String errorData ="com.mysql.jdbc.MysqlDataTruncation: Data truncation: Incorrect date value:";
+			
 			if (e.toString().contains(errorDeleteForeignKey)){
 				Connexion.affichagePopUp("Supprimer la SESSION liée AVANT!");
-
+			
+			} else if(e.toString().contains(errorData)) {	
+				Connexion.affichagePopUp("Le format de la DATE n'est pas respecté! (AAAA/MM/JJ)");
+				
 			} else {
-				Connexion.affichagePopUp("Erreur! Mis à jour non effectuée!");
+				Connexion.affichagePopUp("Ajout/Modification NON effectuée!!");
 
 			}
 			e.printStackTrace();
@@ -109,12 +119,46 @@ public class BDD {
 		while(rs.next()){
 			count = count +1;
 		}
+		
 		if (count==1){
 			return true;
 		}
 		
 		return false;
 	}
+	
+	//initialisation des données jtable
+	public static DefaultTableModel buildTableModel(ResultSet rs) throws SQLException {
+
+		resMeta = rs.getMetaData();
+
+	    // nom des colonnes
+	    Vector<String> columnNames = new Vector<String>();
+	    
+	    // nombre de colonne
+	    int columnCount = resMeta.getColumnCount();
+	    
+	    //ajout des noms de colonne
+	    for (int column = 1; column <= columnCount; column++) {
+	        columnNames.add(resMeta.getColumnName(column));
+	    }
+
+	    // data de la table
+	    Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+	    
+	    //ajout des champs de la table
+	    while (rs.next()) {
+	        Vector<Object> vector = new Vector<Object>();
+	        for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+	            vector.add(rs.getObject(columnIndex));
+	        }
+	        
+	        data.add(vector);
+	    }
+
+	    return new DefaultTableModel(data, columnNames);
+
+	}	
 
 	// getter Rs
 	public static ResultSet getRs() {
