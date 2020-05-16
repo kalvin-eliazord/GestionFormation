@@ -2,7 +2,6 @@ package gestionFormation;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -29,7 +28,6 @@ public class Session extends JFrame implements ActionListener {
 	private static JTable tableSessions = new JTable();
 	private JScrollPane scrollPanSess = new JScrollPane();
 	private JPanel panel_sessions = new JPanel();
-	private JScrollBar scrollBarSess = new JScrollBar();
 
 	//JTextfields
 	private JTextField txtDateDeLimite = new JTextField();
@@ -81,7 +79,6 @@ public class Session extends JFrame implements ActionListener {
 		scrollPanSess.setBounds(6, 16, 645, 218);
 		panel_sessions.add(scrollPanSess);
 		scrollPanSess.setViewportView(tableSessions);
-		scrollPanSess.setRowHeaderView(scrollBarSess);
 
 		//paramétrage graphique du boutton insérer
 		btnInsert.setBounds(661, 68, 155, 23);
@@ -191,7 +188,9 @@ public class Session extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 
 		if(event.getSource() == btnDelete) {
-			
+
+			//requete qui va supprimer les champs où la numSession fait référence dans la table inscriptions 
+			BDD.executeUpdate("DELETE FROM `inscription` WHERE `numSession`="+getStringNumSess());
 			//requete qui supprime les champs dont la numSession correspond
 			BDD.executeUpdate("DELETE FROM `session` WHERE `numSession`="+getStringNumSess());
 			BDD.executeSelect("SELECT * FROM `session`");
@@ -234,11 +233,11 @@ public class Session extends JFrame implements ActionListener {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
+
 		} else if(event.getSource() == btnUpdate) {
-			
+
 			//requete qui met à jour les informations
-			BDD.executeUpdate("UPDATE `session` SET `dateLimiteinsc`='"+getDateLimit()+"', `dateSession`='"+getDateSess()+"', `dateDeFin`='"+getDateDeFin()+"', `idIntervenant`='"+getIdIntervenant()+"',`idLieu`='"+getIdLieu()+"', `numFormation`='"+getNumFormation()+"', `nbPlaces`='"+getTxtNbPlaces()+"'  WHERE `numSession`='"+getStringNumSess()+"'");
+			BDD.executeUpdate("UPDATE `session` SET `dateLimiteInscription`='"+getDateLimit()+"', `dateSession`='"+getDateSess()+"', `dateFinSession`='"+getDateDeFin()+"', `idIntervenant`='"+getIdIntervenant()+"',`idLieu`='"+getIdLieu()+"', `numFormation`='"+getNumFormation()+"', `nbPlaces`='"+getTxtNbPlaces()+"'  WHERE `numSession`='"+getStringNumSess()+"'");
 			// mis à jour du tableau 
 			BDD.executeSelect("SELECT * FROM `session`");
 
@@ -279,10 +278,13 @@ public class Session extends JFrame implements ActionListener {
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
-			}} else if(event.getSource() == btnInsert) {
+
+			}
+			
+		} else if(event.getSource() == btnInsert) {
 
 			//insertion des champs dans la table sessions
-			BDD.executeUpdate("INSERT INTO `session`( `numSession`, `dateLimiteInsc`, `dateSession`, `dateDeFin`, `idIntervenant`, `idLieu`, `numFormation`, `nbPlaces`) VALUES (NULL, '"+getDateLimit()+"','"+getDateSess()+"','"+getDateDeFin()+"','"+getIdIntervenant()+"','"+getIdLieu()+"','"+getNumFormation()+"','"+getTxtNbPlaces()+"');");
+			BDD.executeUpdate("INSERT INTO `session`( `numSession`, `dateLimiteInscription`, `dateSession`, `dateFinSession`, `idIntervenant`, `idLieu`, `numFormation`, `nbPlaces`) VALUES (NULL, '"+getDateLimit()+"','"+getDateSess()+"','"+getDateDeFin()+"','"+getIdIntervenant()+"','"+getIdLieu()+"','"+getNumFormation()+"','"+getTxtNbPlaces()+"');");
 			// mis à jour des tableaux
 			BDD.executeSelect("SELECT * FROM `session`");
 

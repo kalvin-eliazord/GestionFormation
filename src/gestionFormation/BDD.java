@@ -24,7 +24,7 @@ public class BDD {
 		chargerDriver("com.mysql.jdbc.Driver");
 
 		// Connexion à la BDD
-		connexionBdd("mysql://localhost/", "formations", "root", "");
+		connexionBdd("mysql://localhost/", "croslformations", "root", "");
 
 		// Creation d'ub statement
 		creerStatement();
@@ -79,8 +79,18 @@ public class BDD {
 
 		} catch (SQLException e) {
 
-			Connexion.affichagePopUp("Probleme requete SELECT non executée !!");
-			e.printStackTrace();
+
+			String errorConnexion = "Unknown column 'status.idUtilisateur'";
+
+			if (e.toString().contains(errorConnexion)){
+				Connexion.affichagePopUp("Tu n'es pas ADMIN!!");
+
+			} else {
+
+				Connexion.affichagePopUp("Probleme requete SELECT non executée !!");
+				e.printStackTrace();
+
+			}
 		}
 	}
 
@@ -96,13 +106,13 @@ public class BDD {
 			String errorDeleteForeignKey ="com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException";
 			//exception d'une date qui n'est pas rentré dans le bon format
 			String errorData ="com.mysql.jdbc.MysqlDataTruncation: Data truncation: Incorrect date value:";
-			
+
 			if (e.toString().contains(errorDeleteForeignKey)){
 				Connexion.affichagePopUp("Supprimer la SESSION liée AVANT!");
-			
+
 			} else if(e.toString().contains(errorData)) {	
 				Connexion.affichagePopUp("Le format de la DATE n'est pas respecté! (AAAA/MM/JJ)");
-				
+
 			} else {
 				Connexion.affichagePopUp("Ajout/Modification NON effectuée!!");
 
@@ -119,44 +129,44 @@ public class BDD {
 		while(rs.next()){
 			count = count +1;
 		}
-		
+
 		if (count==1){
 			return true;
 		}
-		
+
 		return false;
 	}
-	
-	//initialisation des données jtable
+
+	//initialisation des données des jtable
 	public static DefaultTableModel buildTableModel(ResultSet rs) throws SQLException {
 
 		resMeta = rs.getMetaData();
 
-	    // nom des colonnes
-	    Vector<String> columnNames = new Vector<String>();
-	    
-	    // nombre de colonne
-	    int columnCount = resMeta.getColumnCount();
-	    
-	    //ajout des noms de colonne
-	    for (int column = 1; column <= columnCount; column++) {
-	        columnNames.add(resMeta.getColumnName(column));
-	    }
+		// liste qui va contenir le nom des colonnes
+		Vector<String> columnNames = new Vector<String>();
 
-	    // data de la table
-	    Vector<Vector<Object>> data = new Vector<Vector<Object>>();
-	    
-	    //ajout des champs de la table
-	    while (rs.next()) {
-	        Vector<Object> vector = new Vector<Object>();
-	        for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
-	            vector.add(rs.getObject(columnIndex));
-	        }
-	        
-	        data.add(vector);
-	    }
+		// nombre total de colonne
+		int columnCount = resMeta.getColumnCount();
 
-	    return new DefaultTableModel(data, columnNames);
+		//ajout des noms de colonne à la liste 
+		for (int column = 1; column <= columnCount; column++) {
+			columnNames.add(resMeta.getColumnName(column));
+		}
+
+		// liste qui va contenir les champs des colonnes
+		Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+
+		//ajout des champs à la liste
+		while (rs.next()) {
+			Vector<Object> vector = new Vector<Object>();
+			for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+				vector.add(rs.getObject(columnIndex));
+			}
+
+			data.add(vector);
+		}
+
+		return new DefaultTableModel(data, columnNames);
 
 	}	
 

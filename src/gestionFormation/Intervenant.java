@@ -2,7 +2,6 @@ package gestionFormation;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -26,7 +25,6 @@ public class Intervenant extends JFrame implements ActionListener {
 	private static JFrame interFrame = new JFrame();;
 
 	//tableau
-	private JScrollBar scrollBarInter = new JScrollBar();
 	private JPanel panel = new JPanel();
 	private JScrollPane scrollPanInter = new JScrollPane();
 	private static JTable tableInter = new JTable();
@@ -75,7 +73,6 @@ public class Intervenant extends JFrame implements ActionListener {
 		panel.add(scrollPanInter);
 		scrollPanInter.setViewportView(getTableInter());
 		scrollPanInter.setViewportView(tableInter);
-		scrollPanInter.setRowHeaderView(scrollBarInter);
 
 		//paramétrage graphique du boutton insérer
 		btnInsert.setBounds(510, 76, 111, 23);
@@ -181,7 +178,7 @@ public class Intervenant extends JFrame implements ActionListener {
 		} else if(event.getSource() == btnUpdate) {
 
 			//requete qui met à jour les informations dont l'idIntervenant correspond
-			BDD.executeUpdate("UPDATE `intervenant` SET `idIntervenant`="+getStringInter()+",`nom`='"+getTxtNom()+"', `prenom`='"+getTxtPrenom()+"', `titre`='"+getTxtTitre()+"' WHERE `idIntervenant`="+getStringInter());
+			BDD.executeUpdate("UPDATE `intervenant` SET `nom`='"+getTxtNom()+"', `prenom`='"+getTxtPrenom()+"', `titre`='"+getTxtTitre()+"' WHERE `idIntervenant`="+getStringInter());
 			// mis à jour du tableau intervenants
 			BDD.executeSelect("SELECT * FROM `intervenant`");
 

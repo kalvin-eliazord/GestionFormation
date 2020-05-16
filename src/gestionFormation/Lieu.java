@@ -12,7 +12,6 @@ import javax.swing.JTable;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.awt.event.ActionEvent;
-import javax.swing.JScrollBar;
 import javax.swing.JComboBox;
 
 public class Lieu implements ActionListener {
@@ -33,9 +32,8 @@ public class Lieu implements ActionListener {
 	private JLabel lblCodePostal = new JLabel("codePostal");
 	private JLabel lblVille = new JLabel("ville");
 
-	//Jtable et scrollbar
+	//Jtable
 	private static JTable tableLieu = new JTable();;
-	private JScrollBar scrollBarLieu = new JScrollBar();
 
 	//panel
 	private JPanel panelLieu = new JPanel();
@@ -74,7 +72,6 @@ public class Lieu implements ActionListener {
 		scrollPaneLieu.setBounds(6, 16, 574, 221);
 		panelLieu.add(scrollPaneLieu);
 		scrollPaneLieu.setViewportView(tableLieu);
-		scrollPaneLieu.setRowHeaderView(scrollBarLieu);
 
 		//paramétrage graphique du boutton insert
 		btnInsert.setBounds(590, 76, 113, 23);
@@ -195,7 +192,7 @@ public class Lieu implements ActionListener {
 			
 		} else if(event.getSource() == btnUpdate) {
 			
-			BDD.executeUpdate("UPDATE `lieu` SET `idLieu`='"+getStringLieu()+"',`nomLieu`='"+getTxtNomLieu()+"',`adresse`='"+getTxtAdresse()+"',`codePostal`='"+getTxtCodePostal()+"',`ville`='"+getTxtVille()+"' WHERE `idLieu`='"+getStringLieu()+"'");
+			BDD.executeUpdate("UPDATE `lieu` SET `nomLieu`='"+getTxtNomLieu()+"',`adresse`='"+getTxtAdresse()+"',`codePostal`='"+getTxtCodePostal()+"',`ville`='"+getTxtVille()+"' WHERE `idLieu`='"+getStringLieu()+"'");
 
 			// mis à jour du tableau lieu
 			BDD.executeSelect("SELECT * FROM `lieu`");
@@ -224,9 +221,9 @@ public class Lieu implements ActionListener {
 			//mis à jour du jcombobox idLieu
 			comboIdLieu.removeAllItems();
 			try {
-				BDD.executeSelect("SELECT `numFormation` FROM `formation`");
+				BDD.executeSelect("SELECT `idLieu` FROM `lieu`");
 				while (BDD.getRs().next()) {  
-					comboIdLieu.addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
+					comboIdLieu.addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
 				}
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block

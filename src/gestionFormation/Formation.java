@@ -2,12 +2,10 @@ package gestionFormation;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JButton;
-import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import javax.swing.JPanel;
@@ -24,10 +22,10 @@ public class Formation extends JFrame implements ActionListener {
 
 	//compositions du Tableau
 	private static JTable jTableFormation = new JTable();
-	private JScrollBar scrollBar = new JScrollBar();
 	private JPanel panelFormation = new JPanel();
 	private JScrollPane scrollPane = new JScrollPane();
-	private JScrollBar scrollBarForma = new JScrollBar();
+	
+	//jtextfield
 	private JTextField txtObjectif  = new JTextField();
 	private JTextField txtCouts = new JTextField();;
 
@@ -63,11 +61,10 @@ public class Formation extends JFrame implements ActionListener {
 		frameFormation.getContentPane().add(panelFormation);
 		panelFormation.setLayout(null);
 
-		// paramétrage du scrollpane et du scrollbar
+		// paramétrage du scrollpane
 		scrollPane.setBounds(6, 16, 494, 250);
 		panelFormation.add(scrollPane);
 		scrollPane.setViewportView(jTableFormation);
-		scrollPane.setRowHeaderView(scrollBarForma);
 
 		//paramétrage graphique du boutton insert
 		btnInsert.setBounds(510, 77, 113, 23);
@@ -80,7 +77,6 @@ public class Formation extends JFrame implements ActionListener {
 		//paramétrage graphique du boutton supprimer
 		btnDelete.setBounds(510, 145, 113, 23);
 		panelFormation.add(btnDelete);
-		frameFormation.getContentPane().add(scrollBar, BorderLayout.EAST);
 
 		//paramétrage graphique du label numFormation
 		lblNumFor.setBounds(35, 30, 86, 14);
@@ -225,7 +221,7 @@ public class Formation extends JFrame implements ActionListener {
 		} else if (event.getSource() == btnUpdate) {	
 
 			//requete qui met à jour les informations dont le numFormation correspond
-			BDD.executeUpdate("UPDATE `formation` SET `numFormation`="+getNumFormation()+", `objectif`='"+getTxtObjectif()+"', `couts`="+getTxtCouts()+" WHERE `numFormation`="+getNumFormation());
+			BDD.executeUpdate("UPDATE `formation` SET `objectif`='"+getTxtObjectif()+"', `couts`="+getTxtCouts()+" WHERE `numFormation`="+getNumFormation());
 			// mis à jour du tableau formation
 			BDD.executeSelect("SELECT * FROM `formation`");
 			
