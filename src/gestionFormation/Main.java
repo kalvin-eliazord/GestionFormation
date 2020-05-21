@@ -6,9 +6,11 @@ public class Main {
 
 		Connexion laConnexion = new Connexion();
 
-		Acceuil lAcceuil = new Acceuil();
+		Accueil lAcceuil = new Accueil();
 
 		Formation laFormation = new Formation();
+		
+		Concerner leConcerner = new Concerner();
 
 		Lieu leLieu = new Lieu();
 

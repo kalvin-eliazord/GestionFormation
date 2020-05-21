@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : sam. 16 mai 2020 à 07:00
+-- Généré le : jeu. 21 mai 2020 à 15:38
 -- Version du serveur :  10.4.11-MariaDB
 -- Version de PHP : 7.4.3
 
@@ -21,6 +21,33 @@ SET time_zone = "+00:00";
 --
 -- Base de données : `croslformations`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `concerner`
+--
+
+CREATE TABLE `concerner` (
+  `idStatus` int(11) NOT NULL,
+  `numFormation` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déchargement des données de la table `concerner`
+--
+
+INSERT INTO `concerner` (`idStatus`, `numFormation`) VALUES
+(1, 3),
+(1, 8),
+(2, 4),
+(2, 6),
+(2, 8),
+(3, 5),
+(3, 7),
+(3, 8),
+(4, 1),
+(4, 2);
 
 -- --------------------------------------------------------
 
@@ -47,7 +74,7 @@ INSERT INTO `formation` (`numFormation`, `objectif`, `couts`) VALUES
 (6, 'developpement durable', 30),
 (7, 'Secourisme', 65),
 (8, 'communication', 45),
-(12, 'test', 10);
+(13, 'sale', 10);
 
 -- --------------------------------------------------------
 
@@ -65,6 +92,7 @@ CREATE TABLE `inscription` (
 --
 
 INSERT INTO `inscription` (`numSession`, `idUtilisateur`) VALUES
+(3, 18),
 (4, 18),
 (6, 15),
 (8, 15),
@@ -221,6 +249,13 @@ INSERT INTO `utilisateur` (`idUtilisateur`, `nom`, `prenom`, `mail`, `password`,
 --
 
 --
+-- Index pour la table `concerner`
+--
+ALTER TABLE `concerner`
+  ADD PRIMARY KEY (`idStatus`,`numFormation`) USING BTREE,
+  ADD KEY `formation_numFormation_fk` (`numFormation`);
+
+--
 -- Index pour la table `formation`
 --
 ALTER TABLE `formation`
@@ -275,7 +310,7 @@ ALTER TABLE `utilisateur`
 -- AUTO_INCREMENT pour la table `formation`
 --
 ALTER TABLE `formation`
-  MODIFY `numFormation` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `numFormation` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT pour la table `intervenant`
@@ -310,6 +345,13 @@ ALTER TABLE `utilisateur`
 --
 -- Contraintes pour les tables déchargées
 --
+
+--
+-- Contraintes pour la table `concerner`
+--
+ALTER TABLE `concerner`
+  ADD CONSTRAINT `formation_numFormation_fk` FOREIGN KEY (`numFormation`) REFERENCES `formation` (`numFormation`),
+  ADD CONSTRAINT `status_idStatus_fk` FOREIGN KEY (`idStatus`) REFERENCES `status` (`idStatus`);
 
 --
 -- Contraintes pour la table `inscription`

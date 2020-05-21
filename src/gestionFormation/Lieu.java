@@ -16,152 +16,112 @@ import javax.swing.JComboBox;
 
 public class Lieu implements ActionListener {
 
-	//frame
 	private static JFrame frameLieu = new JFrame();
 
-	//Jtextfields
 	private JTextField txtNomLieu = new JTextField();
 	private JTextField txtAdresse = new JTextField();
 	private JTextField txtCodePostal = new JTextField();
 	private JTextField txtVille = new JTextField();
 
-	//labels
 	private JLabel lblIdLieu = new JLabel("idLieu");
 	private JLabel lblNomLieu = new JLabel("nomLieu");
 	private JLabel lblAdresse = new JLabel("adresse");
 	private JLabel lblCodePostal = new JLabel("codePostal");
 	private JLabel lblVille = new JLabel("ville");
 
-	//Jtable
 	private static JTable tableLieu = new JTable();;
 
-	//panel
 	private JPanel panelLieu = new JPanel();
 
-	//scrollpane
 	private JScrollPane scrollPaneLieu = new JScrollPane();
 
-	//bouttons
 	private JButton btnInsert = new JButton("Insérer");
 	private JButton btnUpdate = new JButton("Modifier");
 	private JButton btnDelete = new JButton("Supprimer");
 	private JButton btnPrecedent = new JButton("Précédent");
 	private JButton btnSuivant = new JButton("Suivant");
-	private JButton btnAccueil = new JButton("Acceuil");
+	private JButton btnAccueil = new JButton("Accueil");
 
-	//jcombobox
 	private static JComboBox<String> comboIdLieu = new JComboBox<String>();
 
-	//constructeur
 	public Lieu() {
 
-		//paramétrage graphique du frame
 		frameLieu.setTitle("Lieu");
-		frameLieu.setBounds(100, 100, 765, 416);
+		frameLieu.setBounds(100, 100, 724, 476);
 		frameLieu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frameLieu.getContentPane().setLayout(null);
 
-		//paramétrage du panelLieu
 		panelLieu.setLayout(null);
 		panelLieu.setForeground(Color.BLUE);
 		panelLieu.setBorder(new TitledBorder(null, "LIEU", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panelLieu.setBounds(10, 81, 713, 245);
 		frameLieu.getContentPane().add(panelLieu);
 
-		//paramétrage graphique du scrollpane et scrollbar
 		scrollPaneLieu.setBounds(6, 16, 574, 221);
 		panelLieu.add(scrollPaneLieu);
 		scrollPaneLieu.setViewportView(tableLieu);
 
-		//paramétrage graphique du boutton insert
-		btnInsert.setBounds(590, 76, 113, 23);
+		btnInsert.setBounds(579, 76, 113, 23);
 		panelLieu.add(btnInsert);
 
-		//paramétrage graphique du boutton update
-		btnUpdate.setBounds(590, 110, 113, 23);
+		btnUpdate.setBounds(579, 110, 113, 23);
 		panelLieu.add(btnUpdate);
 
-		//paramétrage graphique du boutton delete
-		btnDelete.setBounds(590, 144, 113, 23);
+		btnDelete.setBounds(579, 144, 113, 23);
 		panelLieu.add(btnDelete);
 
-		//paramétrage graphique du label idLieu
 		lblIdLieu.setBounds(10, 27, 86, 14);
 		frameLieu.getContentPane().add(lblIdLieu);
 
-		//paramétrage graphique du label nomLieu
 		lblNomLieu.setBounds(116, 27, 65, 14);
 		frameLieu.getContentPane().add(lblNomLieu);
 
-		//paramétrage graphique du label adresse
 		lblAdresse.setBounds(212, 27, 65, 14);
 		frameLieu.getContentPane().add(lblAdresse);
 
-		//paramétrage graphique du label codepostal
 		lblCodePostal.setBounds(308, 27, 89, 14);
 		frameLieu.getContentPane().add(lblCodePostal);
 
-		//paramétrage graphique du textfield nomLieu
 		txtNomLieu.setColumns(10);
 		txtNomLieu.setBounds(116, 40, 86, 20);
 		frameLieu.getContentPane().add(txtNomLieu);
 
-		//paramétrage graphique du textfield adresse
 		txtAdresse.setColumns(10);
 		txtAdresse.setBounds(212, 40, 86, 20);
 		frameLieu.getContentPane().add(txtAdresse);
 
-		//paramétrage graphique du textfield codepostal
 		txtCodePostal.setColumns(10);
 		txtCodePostal.setBounds(308, 39, 86, 20);
 		frameLieu.getContentPane().add(txtCodePostal);
 
-		//paramétrage graphique du label ville
 		lblVille.setBounds(403, 27, 65, 14);
 		frameLieu.getContentPane().add(lblVille);
 
-		//paramétrage graphique du textfield ville
 		txtVille.setColumns(10);
 		txtVille.setBounds(403, 40, 86, 20);
 		frameLieu.getContentPane().add(txtVille);
 
-		//paramétrage graphique du boutton suivant
-		btnSuivant.setBounds(549, 346, 174, 23);
+		btnSuivant.setBounds(524, 391, 174, 23);
 		frameLieu.getContentPane().add(btnSuivant);
 
-		//paramétrage graphique du boutton Acceuil
-		btnAccueil.setBounds(277, 346, 174, 23);
+		btnAccueil.setBounds(277, 391, 174, 23);
 		frameLieu.getContentPane().add(btnAccueil);
 
-		//paramétrage graphique du boutton précédent
-		btnPrecedent.setBounds(10, 346, 141, 23);
+		btnPrecedent.setBounds(10, 391, 141, 23);
 		frameLieu.getContentPane().add(btnPrecedent);
 
-		//paramétrage graphique du jcombobox
 		comboIdLieu.setBounds(10, 39, 96, 22);
 		frameLieu.getContentPane().add(comboIdLieu);
 
-		//action boutton modifier
 		btnUpdate.addActionListener(this);
-
-		// action listener boutton supprimer
 		btnDelete.addActionListener(this);
-
-		// actionlistener du boutton insert
 		btnInsert.addActionListener(this);
-
-		// action boutton précédent
 		btnPrecedent.addActionListener(this);
-
-		//action du boutton suivant
 		btnSuivant.addActionListener(this);
-
-		// action du boutton acceuil
 		btnAccueil.addActionListener(this);
 
 	}
 
-	//action réalisées sur les bouttons
 	public void actionPerformed(ActionEvent event) {
 
 		if(event.getSource() == btnDelete) {
@@ -172,9 +132,9 @@ public class Lieu implements ActionListener {
 			BDD.executeSelect("SELECT * FROM `lieu`");
 
 			try {
-				getTableLieu().setModel(BDD.buildTableModel(BDD.getRs()));
+				getTableLieu().setModel(BDD.buildTable(BDD.getRs()));
+				
 			} catch (SQLException e2) {
-				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
 
@@ -186,7 +146,6 @@ public class Lieu implements ActionListener {
 					comboIdLieu.addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
 				}
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			
@@ -198,9 +157,9 @@ public class Lieu implements ActionListener {
 			BDD.executeSelect("SELECT * FROM `lieu`");
 
 			try {
-				getTableLieu().setModel(BDD.buildTableModel(BDD.getRs()));
+				getTableLieu().setModel(BDD.buildTable(BDD.getRs()));
+				
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			
@@ -212,9 +171,9 @@ public class Lieu implements ActionListener {
 			BDD.executeSelect("SELECT * FROM `lieu`");
 
 			try {
-				getTableLieu().setModel(BDD.buildTableModel(BDD.getRs()));
+				getTableLieu().setModel(BDD.buildTable(BDD.getRs()));
+				
 			} catch (SQLException e2) {
-				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
 
@@ -225,8 +184,8 @@ public class Lieu implements ActionListener {
 				while (BDD.getRs().next()) {  
 					comboIdLieu.addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
 				}
+				
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 
@@ -246,9 +205,9 @@ public class Lieu implements ActionListener {
 			BDD.executeSelect("SELECT * FROM `formation`");
 
 			try {
-				Formation.getJTableFor().setModel(BDD.buildTableModel(BDD.getRs()));
+				Formation.getJTableFor().setModel(BDD.buildTable(BDD.getRs()));
+				
 			} catch (SQLException e2) {
-				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
 
@@ -261,7 +220,6 @@ public class Lieu implements ActionListener {
 				}
 
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 
 			}
@@ -270,12 +228,11 @@ public class Lieu implements ActionListener {
 
 			//passage au frame acceuil
 			frameLieu.setVisible(false);
-			Acceuil.getFrameAcceuil().setVisible(true);
+			Accueil.getFrameAcceuil().setVisible(true);
 		}
 
 	}
 
-	//getters
 	public static JFrame getFrameLieu() {
 		return frameLieu;
 	}

@@ -8,70 +8,57 @@ import java.awt.event.ActionEvent;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
-public class Acceuil implements ActionListener {
+public class Accueil implements ActionListener {
 
-	//frame
-	private static JFrame  frameAcceuil = new JFrame();
+	private static JFrame  frameAccueil = new JFrame();
 
-	//bouttons
 	private JButton btnLogout = new JButton("Déconnexion");
 	private JButton btnAjoutModif = new JButton("Ajout/Modification");
 
-	//panel
 	private JPanel panelGestionForma = new JPanel();
 
-	//constructeur
-	public Acceuil() {
+	public Accueil() {
 
-		//paramétrage de la fenetre d'Acceuil
-		frameAcceuil.setTitle("Accueil");
-		frameAcceuil.setBounds(100, 100, 436, 287);
-		frameAcceuil.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frameAcceuil.getContentPane().setLayout(null);
+		frameAccueil.setTitle("Accueil");
+		frameAccueil.setBounds(100, 100, 436, 287);
+		frameAccueil.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frameAccueil.getContentPane().setLayout(null);
 
-		//paramétrage du panel 
 		panelGestionForma.setBorder(new TitledBorder(null, "GESTIONNAIRE DE FORMATION", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panelGestionForma.setBounds(84, 94, 240, 56);
-		frameAcceuil.getContentPane().add(panelGestionForma);
+		frameAccueil.getContentPane().add(panelGestionForma);
 		panelGestionForma.setLayout(null);
 
-		//paramétrage graphique du boutton ajout/modification
 		btnAjoutModif.setBounds(6, 16, 228, 30);
 		panelGestionForma.add(btnAjoutModif);
 
-		//paramétrage graphique du boutton Déconnexion
 		btnLogout.setBounds(296, 11, 114, 23);
-		frameAcceuil.getContentPane().add(btnLogout);
+		frameAccueil.getContentPane().add(btnLogout);
 
-		//ajout d'un listener sur le boutton ajout/modification
 		btnAjoutModif.addActionListener(this);
-
-		//ajout d'un listener sur le boutton Déconnexion
 		btnLogout.addActionListener(this); 
-
 	}
-	
-	//action des bouttons
+
 	public void actionPerformed(ActionEvent event) {
 
 		if(event.getSource() == btnLogout) {
 			//passage à la fenetre login
 			Connexion.getFrameLogin().setVisible(true);
-			frameAcceuil.setVisible(false);
+			frameAccueil.setVisible(false);
 
 		} else if(event.getSource() == btnAjoutModif) {
 
 			//passage à la frame intervenants
-			frameAcceuil.setVisible(false);
+			frameAccueil.setVisible(false);
 			Intervenant.getInterFrame().setVisible(true);
 
 			//requete qui va itialiser le tableau des intervenants
 			BDD.executeSelect("SELECT * FROM `intervenant`");
 
 			try {
-				Intervenant.getTableInter().setModel(BDD.buildTableModel(BDD.getRs()));
+				Intervenant.getTableInter().setModel(BDD.buildTable(BDD.getRs()));
+
 			} catch (SQLException e2) {
-				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
 
@@ -84,15 +71,13 @@ public class Acceuil implements ActionListener {
 				}
 
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 
 		}
 	}
 
-	//getter
 	public static JFrame getFrameAcceuil() {
-		return frameAcceuil;
+		return frameAccueil;
 	}
 }

@@ -7,7 +7,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
-
 import javax.swing.table.DefaultTableModel;
 
 public class BDD {
@@ -20,20 +19,15 @@ public class BDD {
 	//constructeur
 	public BDD() {
 
-		// Charger le driver JBDC
 		chargerDriver("com.mysql.jdbc.Driver");
 
-		// Connexion à la BDD
 		connexionBdd("mysql://localhost/", "croslformations", "root", "");
 
-		// Creation d'ub statement
 		creerStatement();
 	}
 
-	//Recherche et chargement du driver approprié à la BDD
 	public void chargerDriver(String pilote) {
 
-		// Chargement du Driver (pilote)
 		try {
 			Class.forName(pilote);
 			System.out.println("Driver trouvé!");
@@ -45,7 +39,6 @@ public class BDD {
 		}
 	}
 
-	// Etablissement de la connexion à la base de données
 	public void connexionBdd(String localisationBdd, String bddName, String user, String password) {
 
 		try {
@@ -53,7 +46,6 @@ public class BDD {
 			System.out.println("Connexion à la BDD "+ bddName +" OK!!");
 		}
 		catch (SQLException e) {
-			// TODO Auto-generated catch block
 			System.out.println("Problème Connexion BDD "+ bddName + "  !!");
 
 			e.printStackTrace();
@@ -61,7 +53,6 @@ public class BDD {
 
 	}
 
-	// Creation d'un objet Statement
 	public void creerStatement() {
 		try {
 			stmt = cnx.createStatement();
@@ -72,13 +63,11 @@ public class BDD {
 		}
 	}
 
-	//permet de faire une requete SELECT
 	public static void executeSelect(String requete) {
 		try {
 			rs = stmt.executeQuery(requete);
 
 		} catch (SQLException e) {
-
 
 			String errorConnexion = "Unknown column 'status.idUtilisateur'";
 
@@ -94,7 +83,6 @@ public class BDD {
 		}
 	}
 
-	//permet de faire une requête INSERT, UPDATE et DELETE
 	public static void executeUpdate(String requete) {
 		try {
 			stmt.executeUpdate(requete);
@@ -121,10 +109,8 @@ public class BDD {
 		}
 	}
 
-	//permet de retourner vrai si une table est renvoyée après une requête
 	public static boolean recupererResultatsRequete() throws SQLException {
 
-		// Traitement de requête
 		int count = 0;
 		while(rs.next()){
 			count = count +1;
@@ -137,28 +123,24 @@ public class BDD {
 		return false;
 	}
 
-	//initialisation des données des jtable
-	public static DefaultTableModel buildTableModel(ResultSet rs) throws SQLException {
+	public static DefaultTableModel buildTable(ResultSet rs) throws SQLException {
 
 		resMeta = rs.getMetaData();
-
-		// liste qui va contenir le nom des colonnes
+		
+		int columnCount = resMeta.getColumnCount();
+		
 		Vector<String> columnNames = new Vector<String>();
 
-		// nombre total de colonne
-		int columnCount = resMeta.getColumnCount();
-
-		//ajout des noms de colonne à la liste 
 		for (int column = 1; column <= columnCount; column++) {
 			columnNames.add(resMeta.getColumnName(column));
 		}
 
-		// liste qui va contenir les champs des colonnes
 		Vector<Vector<Object>> data = new Vector<Vector<Object>>();
 
-		//ajout des champs à la liste
 		while (rs.next()) {
+			
 			Vector<Object> vector = new Vector<Object>();
+			
 			for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
 				vector.add(rs.getObject(columnIndex));
 			}
@@ -170,7 +152,6 @@ public class BDD {
 
 	}	
 
-	// getter Rs
 	public static ResultSet getRs() {
 		return rs;
 	}
