@@ -62,18 +62,25 @@ public class Concerner implements ActionListener {
 
 		btnDelete.setBounds(552, 145, 113, 23);
 		panelConcerner.add(btnDelete);
+		
 		lblNumFormation.setBounds(183, 30, 86, 14);
 		frameConcerner.getContentPane().add(lblNumFormation);
+		
 		lblIdStatus.setBounds(34, 30, 65, 14);
 		frameConcerner.getContentPane().add(lblIdStatus);
+		
 		comboIdStatus.setBounds(34, 55, 92, 20);
 		frameConcerner.getContentPane().add(comboIdStatus);
+		
 		btnAccueil.setBounds(263, 391, 188, 23);
 		frameConcerner.getContentPane().add(btnAccueil);
+		
 		btnPrecedent.setBounds(10, 391, 188, 23);
 		frameConcerner.getContentPane().add(btnPrecedent);
+		
 		btnSuivant.setBounds(524, 391, 153, 23);
 		frameConcerner.getContentPane().add(btnSuivant);
+		
 		comboNumFormation.setBounds(183, 55, 97, 20);
 		frameConcerner.getContentPane().add(comboNumFormation);
 		
@@ -84,6 +91,7 @@ public class Concerner implements ActionListener {
 		txtNumFormation.setBounds(469, 55, 86, 20);
 		frameConcerner.getContentPane().add(txtNumFormation);
 		txtNumFormation.setColumns(10);
+		
 		btnUpdate.setBounds(565, 54, 113, 23);
 		frameConcerner.getContentPane().add(btnUpdate);
 		

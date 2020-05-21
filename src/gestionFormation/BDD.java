@@ -72,7 +72,7 @@ public class BDD {
 			String errorConnexion = "Unknown column 'status.idUtilisateur'";
 
 			if (e.toString().contains(errorConnexion)){
-				Connexion.affichagePopUp("Tu n'es pas ADMIN!!");
+				Connexion.affichagePopUp("Tu n'as pas le statut pour te connecter!");
 
 			} else {
 
@@ -103,8 +103,8 @@ public class BDD {
 
 			} else {
 				Connexion.affichagePopUp("Ajout/Modification NON effectuée!!");
-
 			}
+			
 			e.printStackTrace();
 		}
 	}

@@ -58,7 +58,11 @@ public class Connexion implements ActionListener {
 		if( event.getSource() == loginButton) {
 
 			// Requête qui va filtrer dans la BDD un mail, un password et un libelle 
-			BDD.executeSelect("SELECT * FROM  `utilisateur`, `status` WHERE `mail`='"+getTxtMail()+"' AND `password`='"+getTxtPassword()+"' AND utilisateur.idStatus = status.idStatus AND `libelle`= 'admin'");
+			BDD.executeSelect("SELECT * FROM  `utilisateur`, `status` "
+					+ "WHERE `mail`='"+getTxtMail()+"' "
+					+ "AND `password`='"+getTxtPassword()+"' "
+					+ "AND utilisateur.idStatus = status.idStatus "
+					+ "AND `libelle`= 'admin'");
 
 			// si la requête renvoie vraie alors la connexion se fait
 			try {

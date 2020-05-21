@@ -226,7 +226,7 @@ public class Lieu implements ActionListener {
 
 		} else if(event.getSource() == btnAccueil) {
 
-			//passage au frame acceuil
+			//passage au frame accueil
 			frameLieu.setVisible(false);
 			Accueil.getFrameAcceuil().setVisible(true);
 		}

@@ -19,7 +19,6 @@ public class Main {
 		Intervenant lIntervenant = new Intervenant();
 
 		BDD laBDD = new BDD();
-
 	}
-
+	
 }
