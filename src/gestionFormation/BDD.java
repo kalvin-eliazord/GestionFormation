@@ -11,18 +11,15 @@ import javax.swing.table.DefaultTableModel;
 
 public class BDD {
 
-	private Connection cnx;
+	private static Connection cnx;
 	private static Statement stmt;
 	private static ResultSet rs;
 	private static ResultSetMetaData resMeta;
 
-	//constructeur
 	public BDD() {
 
 		chargerDriver("com.mysql.jdbc.Driver");
-
 		connexionBdd("mysql://localhost/", "croslformations", "root", "");
-
 		creerStatement();
 	}
 
@@ -34,7 +31,7 @@ public class BDD {
 		}
 		catch (ClassNotFoundException e) {
 
-			Connexion.affichagePopUp("Driver non trouvé!");
+			//laConnexion.affichagePopUp("Driver non trouvé!");
 			e.printStackTrace();
 		}
 	}
@@ -58,7 +55,7 @@ public class BDD {
 			stmt = cnx.createStatement();
 		} 
 		catch (SQLException e) {
-			Connexion.affichagePopUp("Problème création statement!!");
+			//	laConnexion.affichagePopUp("Problème création statement!!");
 			e.printStackTrace();
 		}
 	}
@@ -72,11 +69,11 @@ public class BDD {
 			String errorConnexion = "Unknown column 'status.idUtilisateur'";
 
 			if (e.toString().contains(errorConnexion)){
-				Connexion.affichagePopUp("Tu n'as pas le statut pour te connecter!");
+				//	laConnexion.affichagePopUp("Tu n'as pas le statut pour te connecter!");
 
 			} else {
 
-				Connexion.affichagePopUp("Probleme requete SELECT non executée !!");
+				//	laConnexion.affichagePopUp("Probleme requete SELECT non executée !!");
 				e.printStackTrace();
 
 			}
@@ -86,7 +83,7 @@ public class BDD {
 	public static void executeUpdate(String requete) {
 		try {
 			stmt.executeUpdate(requete);
-			Connexion.affichagePopUp("Mis à jour réussie!");
+			//	laConnexion.affichagePopUp("Mis à jour réussie!");
 
 		} catch (SQLException e) {
 
@@ -96,15 +93,15 @@ public class BDD {
 			String errorData ="com.mysql.jdbc.MysqlDataTruncation: Data truncation: Incorrect date value:";
 
 			if (e.toString().contains(errorDeleteForeignKey)){
-				Connexion.affichagePopUp("Supprimer la SESSION liée AVANT!");
+				//		laConnexion.affichagePopUp("Supprimer la SESSION liée AVANT!");
 
 			} else if(e.toString().contains(errorData)) {	
-				Connexion.affichagePopUp("Le format de la DATE n'est pas respecté! (AAAA/MM/JJ)");
+				//	laConnexion.affichagePopUp("Le format de la DATE n'est pas respecté! (AAAA/MM/JJ)");
 
 			} else {
-				Connexion.affichagePopUp("Ajout/Modification NON effectuée!!");
+				//	laConnexion.affichagePopUp("Ajout/Modification NON effectuée!!");
 			}
-			
+
 			e.printStackTrace();
 		}
 	}
@@ -126,9 +123,9 @@ public class BDD {
 	public static DefaultTableModel buildTable(ResultSet rs) throws SQLException {
 
 		resMeta = rs.getMetaData();
-		
+
 		int columnCount = resMeta.getColumnCount();
-		
+
 		Vector<String> columnNames = new Vector<String>();
 
 		for (int column = 1; column <= columnCount; column++) {
@@ -138,9 +135,9 @@ public class BDD {
 		Vector<Vector<Object>> data = new Vector<Vector<Object>>();
 
 		while (rs.next()) {
-			
+
 			Vector<Object> vector = new Vector<Object>();
-			
+
 			for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
 				vector.add(rs.getObject(columnIndex));
 			}

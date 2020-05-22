@@ -16,7 +16,7 @@ import javax.swing.JComboBox;
 
 public class Lieu implements ActionListener {
 
-	private static JFrame frameLieu = new JFrame();
+	private JFrame frameLieu = new JFrame();
 
 	private JTextField txtNomLieu = new JTextField();
 	private JTextField txtAdresse = new JTextField();
@@ -29,20 +29,18 @@ public class Lieu implements ActionListener {
 	private JLabel lblCodePostal = new JLabel("codePostal");
 	private JLabel lblVille = new JLabel("ville");
 
-	private static JTable tableLieu = new JTable();;
-
+	private JTable tableLieu = new JTable();;
 	private JPanel panelLieu = new JPanel();
-
 	private JScrollPane scrollPaneLieu = new JScrollPane();
 
 	private JButton btnInsert = new JButton("Insérer");
 	private JButton btnUpdate = new JButton("Modifier");
 	private JButton btnDelete = new JButton("Supprimer");
-	private JButton btnPrecedent = new JButton("Précédent");
-	private JButton btnSuivant = new JButton("Suivant");
-	private JButton btnAccueil = new JButton("Accueil");
+	private JButton btnSession = new JButton("Retour Sessions");
 
 	private static JComboBox<String> comboIdLieu = new JComboBox<String>();
+
+	private Session laSession;
 
 	public Lieu() {
 
@@ -101,14 +99,8 @@ public class Lieu implements ActionListener {
 		txtVille.setBounds(403, 40, 86, 20);
 		frameLieu.getContentPane().add(txtVille);
 
-		btnSuivant.setBounds(524, 391, 174, 23);
-		frameLieu.getContentPane().add(btnSuivant);
-
-		btnAccueil.setBounds(277, 391, 174, 23);
-		frameLieu.getContentPane().add(btnAccueil);
-
-		btnPrecedent.setBounds(10, 391, 141, 23);
-		frameLieu.getContentPane().add(btnPrecedent);
+		btnSession.setBounds(294, 372, 225, 23);
+		frameLieu.getContentPane().add(btnSession);
 
 		comboIdLieu.setBounds(10, 39, 96, 22);
 		frameLieu.getContentPane().add(comboIdLieu);
@@ -116,16 +108,13 @@ public class Lieu implements ActionListener {
 		btnUpdate.addActionListener(this);
 		btnDelete.addActionListener(this);
 		btnInsert.addActionListener(this);
-		btnPrecedent.addActionListener(this);
-		btnSuivant.addActionListener(this);
-		btnAccueil.addActionListener(this);
-
+		btnSession.addActionListener(this);
 	}
 
 	public void actionPerformed(ActionEvent event) {
 
 		if(event.getSource() == btnDelete) {
-			
+
 			BDD.executeUpdate("DELETE FROM `lieu` WHERE `idLieu`='"+getStringLieu()+"'");
 
 			// mis à jour du tableau lieu
@@ -133,7 +122,7 @@ public class Lieu implements ActionListener {
 
 			try {
 				getTableLieu().setModel(BDD.buildTable(BDD.getRs()));
-				
+
 			} catch (SQLException e2) {
 				e2.printStackTrace();
 			}
@@ -148,31 +137,35 @@ public class Lieu implements ActionListener {
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
-			
+
 		} else if(event.getSource() == btnUpdate) {
-			
-			BDD.executeUpdate("UPDATE `lieu` SET `nomLieu`='"+getTxtNomLieu()+"',`adresse`='"+getTxtAdresse()+"',`codePostal`='"+getTxtCodePostal()+"',`ville`='"+getTxtVille()+"' WHERE `idLieu`='"+getStringLieu()+"'");
+
+			BDD.executeUpdate("UPDATE `lieu` "
+					+ "SET `nomLieu`='"+getTxtNomLieu()+"',`adresse`='"+getTxtAdresse()+"',"
+					+ "`codePostal`='"+getTxtCodePostal()+"',`ville`='"+getTxtVille()+"' "
+					+ "WHERE `idLieu`='"+getStringLieu()+"'");
 
 			// mis à jour du tableau lieu
 			BDD.executeSelect("SELECT * FROM `lieu`");
 
 			try {
 				getTableLieu().setModel(BDD.buildTable(BDD.getRs()));
-				
+
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
-			
+
 		} else if(event.getSource() == btnInsert) {
 
-			BDD.executeUpdate("INSERT INTO `lieu`( `nomLieu`, `adresse`, `codePostal`, `ville`) VALUES ('"+getTxtNomLieu()+"','"+getTxtAdresse()+"',"+getTxtCodePostal()+",'"+getTxtVille()+"')");
+			BDD.executeUpdate("INSERT INTO `lieu`( `nomLieu`, `adresse`, `codePostal`, `ville`) "
+					+ "VALUES ('"+getTxtNomLieu()+"','"+getTxtAdresse()+"',"+getTxtCodePostal()+",'"+getTxtVille()+"')");
 
 			// mis à jour du tableau lieu
 			BDD.executeSelect("SELECT * FROM `lieu`");
 
 			try {
 				getTableLieu().setModel(BDD.buildTable(BDD.getRs()));
-				
+
 			} catch (SQLException e2) {
 				e2.printStackTrace();
 			}
@@ -184,68 +177,75 @@ public class Lieu implements ActionListener {
 				while (BDD.getRs().next()) {  
 					comboIdLieu.addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
 				}
-				
+
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
 
-		} else if(event.getSource() == btnPrecedent) {
+		} else if(event.getSource() == btnSession) {
 
-			//rend visible l'ihm intervenant
-			Intervenant.getInterFrame().setVisible(true);
+			//rend visible l'ihm session
 			frameLieu.setVisible(false);
+			laSession.getFrameSession().setVisible(true);
 
-		} else if(event.getSource() == btnSuivant) {
-
-			//rend visible l'ihm formation
-			Formation.getFrameFormation().setVisible(true);
-			frameLieu.setVisible(false);
-
-			//mis à jour du tableau formation
-			BDD.executeSelect("SELECT * FROM `formation`");
+			//mis à jour du tableau session
+			BDD.executeSelect("SELECT * FROM `session`");
 
 			try {
-				Formation.getJTableFor().setModel(BDD.buildTable(BDD.getRs()));
-				
-			} catch (SQLException e2) {
-				e2.printStackTrace();
+				laSession.getJTableSess().setModel(BDD.buildTable(BDD.getRs()));
+
+			} catch (SQLException e1) {
+				e1.printStackTrace();
 			}
 
-			//mis à jour du jcombobox numFormation
-			Formation.getComboNumForma().removeAllItems();
+			//mis à jour des Jcombobox
+			laSession.getComboNumSess().removeAllItems();
+			laSession.getComboIdInter().removeAllItems();
+			laSession.getComboIdLieu().removeAllItems();
+			laSession.getComboNumForma().removeAllItems();
+
 			try {
+
+				BDD.executeSelect("SELECT `numSession` FROM `session`");
+				while (BDD.getRs().next()) {  
+					laSession.getComboNumSess().addItem(Integer.toString(BDD.getRs().getInt("numSession")));  
+				}
+
+				BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
+				while (BDD.getRs().next()) {  
+					laSession.getComboIdInter().addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
+				}
+
+				BDD.executeSelect("SELECT `idLieu` FROM `lieu`");
+				while (BDD.getRs().next()) {  
+					laSession.getComboIdLieu().addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
+				}
+
 				BDD.executeSelect("SELECT `numFormation` FROM `formation`");
 				while (BDD.getRs().next()) {  
-					Formation.getComboNumForma().addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
+					laSession.getComboNumForma().addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
 				}
 
 			} catch (SQLException e1) {
 				e1.printStackTrace();
-
 			}
-
-		} else if(event.getSource() == btnAccueil) {
-
-			//passage au frame accueil
-			frameLieu.setVisible(false);
-			Accueil.getFrameAcceuil().setVisible(true);
 		}
 
 	}
 
-	public static JFrame getFrameLieu() {
+	public JFrame getFrameLieu() {
 		return frameLieu;
 	}
 
-	public static JTable getTableLieu() {
+	public JTable getTableLieu() {
 		return tableLieu;
 	}
 
-	public static String getStringLieu() {
+	public String getStringLieu() {
 		return comboIdLieu.getSelectedItem().toString();
 	}
 
-	public static JComboBox<String> getComboIdLieu() {
+	public JComboBox<String> getComboIdLieu() {
 		return comboIdLieu;
 	}
 

@@ -14,7 +14,7 @@ import java.awt.event.ActionEvent;
 
 public class Connexion implements ActionListener {
 
-	private static JFrame frameLogin = new JFrame();
+	private JFrame frameLogin = new JFrame();
 
 	private JLabel lblMail = new JLabel("Adresse Mail");
 	private JLabel lblPassword = new JLabel("Mot de passe");;
@@ -23,9 +23,17 @@ public class Connexion implements ActionListener {
 
 	private JTextField txtUsername = new JTextField();
 	private JTextField txtPassword = new JPasswordField();
-
+	
+	Lieu leLieu = new Lieu();
+	Intervenant lIntervenant = new Intervenant();
+	Formation laFormation = new Formation();
+	
+	private Session laSession = new Session(leLieu, lIntervenant, laFormation);;
+	
 	public Connexion() {
-
+		
+		
+		
 		txtPassword.setBounds(143, 139, 123, 20);
 		txtPassword.setColumns(10);
 		frameLogin.getContentPane().add(txtPassword);
@@ -56,7 +64,7 @@ public class Connexion implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 
 		if( event.getSource() == loginButton) {
-
+			
 			// Requête qui va filtrer dans la BDD un mail, un password et un libelle 
 			BDD.executeSelect("SELECT * FROM  `utilisateur`, `status` "
 					+ "WHERE `mail`='"+getTxtMail()+"' "
@@ -68,13 +76,56 @@ public class Connexion implements ActionListener {
 			try {
 				if(BDD.recupererResultatsRequete() == true) {
 
-					//affichage de l'acceuil
-					Connexion.getFrameLogin().setVisible(false);
-					Accueil.getFrameAcceuil().setVisible(true);
+					//rend visible l'ihm session
+					getFrameConnexion().setVisible(false);
+					laSession.getFrameSession().setVisible(true);
+
+					//mis à jour du tableau session
+					BDD.executeSelect("SELECT * FROM `session`");
+
+					try {
+						laSession.getJTableSess().setModel(BDD.buildTable(BDD.getRs()));
+
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+
+					//mis à jour des Jcombobox
+					laSession.getComboNumSess().removeAllItems();
+					laSession.getComboIdInter().removeAllItems();
+					laSession.getComboIdLieu().removeAllItems();
+					laSession.getComboNumForma().removeAllItems();
+
+					try {
+
+						BDD.executeSelect("SELECT `numSession` FROM `session`");
+						while (BDD.getRs().next()) {  
+							laSession.getComboNumSess().addItem(Integer.toString(BDD.getRs().getInt("numSession")));  
+						}
+
+						BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
+						while (BDD.getRs().next()) {  
+							laSession.getComboIdInter().addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
+						}
+
+						BDD.executeSelect("SELECT `idLieu` FROM `lieu`");
+						while (BDD.getRs().next()) {  
+							laSession.getComboIdLieu().addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
+						}
+
+						BDD.executeSelect("SELECT `numFormation` FROM `formation`");
+						while (BDD.getRs().next()) {  
+							laSession.getComboNumForma().addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
+						}
+
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+
 
 				} else {
 
-					Connexion.affichagePopUp("MAIL ou MDP incorrect!");
+					affichagePopUp("MAIL ou MDP incorrect!");
 				}
 
 			} catch (SQLException e1) {
@@ -83,7 +134,7 @@ public class Connexion implements ActionListener {
 		}
 	}
 
-	public static void affichagePopUp(String message){
+	public void affichagePopUp(String message){
 		JOptionPane.showMessageDialog(frameLogin, message);
 	}
 
@@ -95,7 +146,7 @@ public class Connexion implements ActionListener {
 		return txtUsername.getText();
 	}
 
-	public static JFrame getFrameLogin() {
+	public JFrame getFrameConnexion() {
 		return frameLogin;
 	}
 
