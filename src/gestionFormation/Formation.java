@@ -16,9 +16,14 @@ import javax.swing.JComboBox;
 
 public class Formation extends JFrame implements ActionListener {
 
+	/**
+	 * Cette Classe permet d'ajouter, de modifier et de supprimer des champs 
+	 * dans la table Formation et Concerner, elle permet aussi de revenir à l'IHM Session. 
+	 */
+
 	private static final long serialVersionUID = 1L;
 
-	private JFrame frameFormaConcer = new JFrame();;
+	private JFrame frameFormation = new JFrame();;
 
 	private JTable tableFormation = new JTable();
 	private JTable tableConcerner = new JTable();
@@ -31,8 +36,6 @@ public class Formation extends JFrame implements ActionListener {
 
 	private JTextField txtFieldObjectif = new JTextField();
 	private JTextField txtFieldCout = new JTextField();
-	private JTextField txtFieldIdStatus = new JTextField();
-	private JTextField txtFieldNumFormation = new JTextField();
 
 	private JButton btnUpdateFormation = new JButton("Modifier");
 	private JButton btnInsertFormation = new JButton("Insérer");
@@ -42,107 +45,115 @@ public class Formation extends JFrame implements ActionListener {
 	private JButton btnUpdateConcerner = new JButton("Modifier");
 	private JButton btnDeleteConcerner = new JButton("Supprimer");
 
-	private JLabel lblFormationNumForma = new JLabel("Formation.numFormation");
-	private JLabel lblConcernerNumForma = new JLabel("Concerner.numFormation");
-	private JLabel lblObjectifForma = new JLabel("Formation.objectif");
-	private JLabel lblCoutForma = new JLabel("Formation.cout");
-	private JLabel lblNumForma = new JLabel("Concerner.idStatus");
-	private JLabel lblModifierIdstatus = new JLabel("Pour modifier idStatus");
-	private JLabel lblNewLabel = new JLabel("Pour modifier numFormation");
+	private JLabel lblNumFormaF = new JLabel("Formation.numFormation");
+	private JLabel lblNumFormaC = new JLabel("Concerner.numFormation");
+	private JLabel lblObjectif = new JLabel("objectif");
+	private JLabel lblCout = new JLabel("cout");
+	private JLabel lblIdStatus = new JLabel("idStatus");
+	private JLabel lblIdStatusM = new JLabel("Pour modifier idStatus");
+	private JLabel lblNumFormaM = new JLabel("Pour modifier numFormation");
 
-	private static JComboBox<String> comboIdStatus = new JComboBox<String>();
-	private static JComboBox<String> comboFormation_NumForma = new JComboBox<String>();
-	private JComboBox<String> comboConcerner_NumForma = new JComboBox<String>();
+	private JComboBox<String> comboIdStatus = new JComboBox<String>();
+	private JComboBox<String> comboNumFormaF = new JComboBox<String>();
+	private JComboBox<String> comboNumFormaC = new JComboBox<String>();
+	private JComboBox<String> comboIdStatusM = new JComboBox<String>();
+	private JComboBox<String> comboNumFormaM = new JComboBox<String>();
 
 	public Formation() {
 
-		frameFormaConcer.setTitle("Formation / Concerner");
-		frameFormaConcer.setBounds(100, 100, 893, 702);
-		frameFormaConcer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//j'empêche la modification manuelle des jtables
+		tableFormation.setEnabled(false);
+		tableConcerner.setEnabled(false);
 
-		panelFormation.setBounds(10, 79, 826, 245);
+		frameFormation.setTitle("Formation / Concerner");
+		frameFormation.setBounds(100, 100, 893, 702);
+		frameFormation.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frameFormation.getContentPane().setLayout(null);
+
+		panelFormation.setBounds(10, 79, 840, 234);
 		panelFormation.setForeground(Color.BLUE);
 		panelFormation.setBorder(new TitledBorder(null, "FORMATIONS", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		frameFormaConcer.getContentPane().add(panelFormation);
+		frameFormation.getContentPane().add(panelFormation);
+		panelFormation.setLayout(null);
 
-		scrollPanFormation.setBounds(6, 16, 645, 218);
+		scrollPanFormation.setBounds(10, 21, 699, 196);
 		panelFormation.add(scrollPanFormation);
 		scrollPanFormation.setViewportView(tableFormation);
 
-		btnInsertFormation.setBounds(661, 68, 155, 23);
+		btnInsertFormation.setBounds(719, 69, 111, 23);
 		panelFormation.add(btnInsertFormation);
 
-		btnUpdateFormation.setBounds(661, 102, 155, 23);
+		btnUpdateFormation.setBounds(719, 103, 111, 23);
 		panelFormation.add(btnUpdateFormation);
 
-		btnDeleteFormation.setBounds(661, 136, 155, 23);
+		btnDeleteFormation.setBounds(719, 137, 111, 23);
 		panelFormation.add(btnDeleteFormation);
+		lblNumFormaF.setBounds(7, 23, 157, 14);
 
-		lblFormationNumForma.setBounds(10, 23, 157, 14);
-		frameFormaConcer.getContentPane().add(lblFormationNumForma);
+		frameFormation.getContentPane().add(lblNumFormaF);
+		lblObjectif.setBounds(174, 23, 139, 14);
 
-		lblObjectifForma.setBounds(174, 23, 139, 14);
-		frameFormaConcer.getContentPane().add(lblObjectifForma);
+		frameFormation.getContentPane().add(lblObjectif);
+		lblNumFormaC.setBounds(174, 335, 157, 14);
 
-		lblConcernerNumForma.setBounds(10, 335, 157, 14);
-		frameFormaConcer.getContentPane().add(lblConcernerNumForma);
+		frameFormation.getContentPane().add(lblNumFormaC);
+		txtFieldObjectif.setBounds(174, 36, 104, 20);
 
-		txtFieldObjectif.setBounds(174, 36, 126, 20);
-		frameFormaConcer.getContentPane().add(txtFieldObjectif);
+		frameFormation.getContentPane().add(txtFieldObjectif);
 		txtFieldObjectif.setColumns(10);
 
-		btnSession.setBounds(607, 347, 260, 23);
-		frameFormaConcer.getContentPane().add(btnSession);
+		btnSession.setBounds(274, 629, 260, 23);
+		frameFormation.getContentPane().add(btnSession);
 
-		lblCoutForma.setBounds(342, 23, 110, 14);
-		frameFormaConcer.getContentPane().add(lblCoutForma);
+		lblCout.setBounds(323, 23, 110, 14);
+		frameFormation.getContentPane().add(lblCout);
+
+		txtFieldCout.setBounds(323, 36, 129, 20);
 		txtFieldCout.setColumns(10);
-		txtFieldCout.setBounds(342, 36, 110, 20);
-		frameFormaConcer.getContentPane().add(txtFieldCout);
+		frameFormation.getContentPane().add(txtFieldCout);
 
-		lblNumForma.setBounds(181, 335, 119, 14);
-		frameFormaConcer.getContentPane().add(lblNumForma);
+		lblIdStatus.setBounds(10, 335, 119, 14);
+		frameFormation.getContentPane().add(lblIdStatus);
 
-		comboIdStatus.setBounds(183, 348, 117, 22);
-		frameFormaConcer.getContentPane().add(comboIdStatus);
+		comboIdStatus.setBounds(10, 348, 126, 22);
+		frameFormation.getContentPane().add(comboIdStatus);
 
-		comboConcerner_NumForma.setBounds(10, 35, 130, 22);
-		frameFormaConcer.getContentPane().add(comboConcerner_NumForma);
+		comboNumFormaC.setBounds(174, 348, 130, 22);
+		frameFormation.getContentPane().add(comboNumFormaC);
 
+		panelConcerner.setBounds(10, 380, 840, 234);
 		panelConcerner.setForeground(Color.BLUE);
 		panelConcerner.setBorder(new TitledBorder(null, "CONCERNER", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelConcerner.setBounds(10, 380, 826, 245);
-		frameFormaConcer.getContentPane().add(panelConcerner);
+		frameFormation.getContentPane().add(panelConcerner);
+		panelConcerner.setLayout(null);
 
-		scrollPanConcerner.setBounds(6, 16, 645, 218);
+		scrollPanConcerner.setBounds(10, 21, 703, 200);
 		panelConcerner.add(scrollPanConcerner);
 		scrollPanConcerner.setViewportView(tableConcerner);
 
-		btnInsertConcerner.setBounds(661, 68, 155, 23);
+		btnInsertConcerner.setBounds(723, 70, 107, 23);
 		panelConcerner.add(btnInsertConcerner);
 
-		btnUpdateConcerner.setBounds(661, 102, 155, 23);
+		btnUpdateConcerner.setBounds(723, 104, 107, 23);
 		panelConcerner.add(btnUpdateConcerner);
 
-		btnDeleteConcerner.setBounds(661, 136, 155, 23);
+		btnDeleteConcerner.setBounds(723, 140, 107, 23);
 		panelConcerner.add(btnDeleteConcerner);
 
-		comboFormation_NumForma.setBounds(10, 347, 158, 22);
-		frameFormaConcer.getContentPane().add(comboFormation_NumForma);
+		comboNumFormaF.setBounds(10, 35, 130, 22);
+		frameFormation.getContentPane().add(comboNumFormaF);
 
-		txtFieldNumFormation.setBounds(310, 350, 139, 20);
-		frameFormaConcer.getContentPane().add(txtFieldNumFormation);
-		txtFieldNumFormation.setColumns(10);
+		lblNumFormaM.setBounds(597, 335, 192, 14);
+		frameFormation.getContentPane().add(lblNumFormaM);
 
-		txtFieldIdStatus.setColumns(10);
-		txtFieldIdStatus.setBounds(480, 350, 117, 20);
-		frameFormaConcer.getContentPane().add(txtFieldIdStatus);
+		lblIdStatusM.setBounds(434, 333, 176, 18);
+		frameFormation.getContentPane().add(lblIdStatusM);
 
-		lblNewLabel.setBounds(313, 335, 157, 14);
-		frameFormaConcer.getContentPane().add(lblNewLabel);
+		comboNumFormaM.setBounds(597, 348, 139, 22);
+		frameFormation.getContentPane().add(comboNumFormaM);
 
-		lblModifierIdstatus.setBounds(480, 335, 136, 14);
-		frameFormaConcer.getContentPane().add(lblModifierIdstatus);
+		comboIdStatusM.setBounds(434, 348, 130, 22);
+		frameFormation.getContentPane().add(comboIdStatusM);
 
 		btnDeleteFormation.addActionListener(this);
 		btnUpdateFormation.addActionListener(this);
@@ -157,41 +168,52 @@ public class Formation extends JFrame implements ActionListener {
 
 		if(event.getSource() == btnDeleteFormation) {
 
-			//requete qui supprime les informations dont le numFormation correspond
-			BDD.executeUpdate("DELETE FROM `formation` WHERE `numFormation`="+getStringFormationNumForma());
-			// mis à jour du tableau formation
-			BDD.executeSelect("SELECT * FROM `formation`");
+			try {	
+				//requete qui va supprimer tout les champs dont le numFormation correspond dans la table concerner
+				BDD.executeUpdate("DELETE FROM concerner WHERE numFormation ='"+getStringComboNumFormaF()+"'");
 
-			try {
+				// mis à jour du tableau concerner
+				BDD.executeSelect("SELECT concerner.idStatus, STATUS.libelle, concerner.numFormation, formation.objectif "
+						+ "FROM `concerner`, formation, STATUS "
+						+ "WHERE concerner.numFormation = formation.numFormation AND concerner.idStatus = STATUS.idStatus");
+
+				getJTableConcerner().setModel(BDD.buildTable(BDD.getRs()));
+
+				//requete qui supprime le champ dont le numFormation correspond dans la table formation
+				BDD.executeUpdate("DELETE FROM `formation` WHERE `numFormation`="+getStringComboNumFormaF());
+
+				// mis à jour du tableau formation
+				BDD.executeSelect("SELECT * FROM `formation`");
 				getJTableFormation().setModel(BDD.buildTable(BDD.getRs()));
 
+				//je vide les jcombobox que je vais remplir avant pour pas qu'il y ai de doublons
+				getComboNumFormaF().removeAllItems();
+				getComboNumFormaC().removeAllItems();
+				getComboConcerner_NumFormaM().removeAllItems();
+
+				//requete qui va récupérer tout les numFormation
+				BDD.executeSelect("SELECT `numFormation` FROM `formation` ORDER BY `numFormation`");
+
+				//insertion des champs de la requete dans les jcombobox
+				while (BDD.getRs().next()) {  
+					getComboNumFormaC().addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
+					getComboNumFormaF().addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
+					getComboConcerner_NumFormaM().addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 
-			//mis à jour du jcombobox numFormation
-			getComboFormation_NumForma().removeAllItems();
-			try {
-				BDD.executeSelect("SELECT `numFormation` FROM `formation`");
-				while (BDD.getRs().next()) {  
-					getComboFormation_NumForma().addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
-				}
-
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-
 		} else if(event.getSource() == btnUpdateFormation) {
 
-			//requete qui met à jour les informations dont le numFormation correspond
-			BDD.executeUpdate("UPDATE `formation` "
-					+ "SET `objectif`='"+getTxtFieldObjectif()+"', `couts`="+getTxtFieldCouts()+" "
-					+ "WHERE `numFormation`="+getStringFormationNumForma());
-
-			// mis à jour du tableau formation
-			BDD.executeSelect("SELECT * FROM `formation`");
-
 			try {
+				//requete qui met à jour les champs dont le numFormation correspond dans la table Formation
+				BDD.executeUpdate("UPDATE `formation` "
+						+ "SET `objectif`='"+getTxtFieldObjectif()+"', `couts`="+getTxtFieldCouts()+" "
+						+ "WHERE `numFormation`="+getStringComboNumFormaF());
+
+				//mis à jour du tableau formation
+				BDD.executeSelect("SELECT * FROM `formation`");
 				getJTableFormation().setModel(BDD.buildTable(BDD.getRs()));
 
 			} catch (SQLException e) {
@@ -203,53 +225,56 @@ public class Formation extends JFrame implements ActionListener {
 			try {
 				//requete qui va insérer dans la table formation
 				BDD.executeUpdate("INSERT INTO `formation`( `objectif`, `couts`) VALUES ('"+getTxtFieldObjectif()+"',"+getTxtFieldCouts()+")");	
+
 				// mis à jour du tableau formation
 				BDD.executeSelect("SELECT * FROM `formation`");
 				getJTableFormation().setModel(BDD.buildTable(BDD.getRs()));
 
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+				//je vide les jcombobox que je vais remplir avant pour pas qu'il y ai de doublons
+				getComboNumFormaF().removeAllItems();
+				getComboNumFormaC().removeAllItems();
+				getComboConcerner_NumFormaM().removeAllItems();
 
-			//mis à jour du jcombobox Formation.numFormation
-			getComboFormation_NumForma().removeAllItems();
-			try {
+				//je récupère les numFormation puis je les insère dans les jcombobx
 				BDD.executeSelect("SELECT `numFormation` FROM `formation`");
 				while (BDD.getRs().next()) {  
-					getComboFormation_NumForma().addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
+					getComboNumFormaF().addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
+					getComboNumFormaC().addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
+					getComboConcerner_NumFormaM().addItem(Integer.toString(BDD.getRs().getInt("numFormation")));  
 				}
 
-			} catch (SQLException e1) {
-				e1.printStackTrace();
+				//requete qui va récupérer les champs de la table concerner et leurs appellations respectives
+				// qui sont dans la table status et formation
+				BDD.executeSelect("SELECT concerner.idStatus, STATUS.libelle, concerner.numFormation, formation.objectif "
+						+ "FROM `concerner`, formation, STATUS "
+						+ "WHERE concerner.numFormation = formation.numFormation AND concerner.idStatus = STATUS.idStatus");
+				
+				//mise à jour du tableau concerner
+				getJTableConcerner().setModel(BDD.buildTable(BDD.getRs()));
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 
 		} else if(event.getSource() == btnSession) {
 
 			Session laSession = new Session();
 
-			//passage au frame session
+			//passage au frame session en libérant en mémoire l'ihm formation
 			laSession.getFrameSession().setVisible(true);
-			frameFormaConcer.setVisible(false);
-
-			//mis à jour du tableau session
-			BDD.executeSelect("SELECT * FROM `session`");
+			frameFormation.dispose();
 
 			try {
-				laSession.getJTableSess().setModel(BDD.buildTable(BDD.getRs()));
+				//mis à jour du tableau session
+				BDD.executeSelect("SELECT * FROM `session`");
+				laSession.getJTableSession().setModel(BDD.buildTable(BDD.getRs()));
 
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-
-			//mis à jour des Jcombobox
-			laSession.getComboNumSess().removeAllItems();
-			laSession.getComboIdInter().removeAllItems();
-			laSession.getComboIdLieu().removeAllItems();
-			laSession.getComboNumForma().removeAllItems();
-
-			try {
-
-				BDD.executeSelect("SELECT `numSession` FROM `session`");
+				//mise à jour des jcombobox
+				laSession.getComboNumSess().removeAllItems();
+				laSession.getComboIdInter().removeAllItems();
+				laSession.getComboIdLieu().removeAllItems();
+				laSession.getComboNumForma().removeAllItems();
+				BDD.executeSelect("SELECT `numSession` FROM `session` ORDER BY `numSession");
 				while (BDD.getRs().next()) {  
 					laSession.getComboNumSess().addItem(Integer.toString(BDD.getRs().getInt("numSession")));  
 				}
@@ -282,7 +307,9 @@ public class Formation extends JFrame implements ActionListener {
 						+ " AND `numFormation`='"+getStringComboNumFormaC()+"'");	
 
 				//rafraichissement du tableau concerner
-				BDD.executeSelect("SELECT * FROM concerner ");
+				BDD.executeSelect("SELECT concerner.idStatus, STATUS.libelle, concerner.numFormation, formation.objectif "
+						+ "FROM `concerner`, formation, STATUS "
+						+ "WHERE concerner.numFormation = formation.numFormation AND concerner.idStatus = STATUS.idStatus");
 
 				getJTableConcerner().setModel(BDD.buildTable(BDD.getRs()));
 
@@ -295,11 +322,14 @@ public class Formation extends JFrame implements ActionListener {
 			try {
 				//requete qui mettre à jour les informations dont le numFormation et l'idStatus correspond
 				BDD.executeUpdate("UPDATE `concerner` "
-						+ "SET `idStatus`='"+getTxtFieldIdStatus()+"', `numFormation`="+getTxtFieldNumFormation()+" "
+						+ "SET `idStatus`='"+getStringComboIdStatusM()+"', `numFormation`="+getStringComboConcerner_NumFormaM()+" "
 						+ "WHERE `idStatus`="+getStringComboIdStatus()+" AND `numFormation`="+getStringComboNumFormaC());
 
 				// mis à jour du tableau concerner
-				BDD.executeSelect("SELECT * FROM concerner");
+				BDD.executeSelect("SELECT concerner.idStatus, STATUS.libelle, concerner.numFormation, formation.objectif "
+						+ "FROM `concerner`, formation, STATUS "
+						+ "WHERE concerner.numFormation = formation.numFormation AND concerner.idStatus = STATUS.idStatus");
+
 				getJTableConcerner().setModel(BDD.buildTable(BDD.getRs()));
 
 			} catch (SQLException e1) {
@@ -309,15 +339,15 @@ public class Formation extends JFrame implements ActionListener {
 		} else if (event.getSource() == btnInsertConcerner) {	
 
 			try {
-				//requete qui va insérer dans la table concerner
+				//requete qui va insérer un champ dans la table concerner
 				BDD.executeUpdate("INSERT INTO `concerner`"
 						+ "( `idStatus`, `numFormation`) "
 						+ "VALUES ('"+getStringComboIdStatus()+"',"+getStringComboNumFormaC()+")");	
 
-				// mis à jour du tableau formation
-				BDD.executeSelect("SELECT concerner.idStatus, STATUS .libelle, concerner.numFormation, formation.objectif "
+				// mis à jour du tableau concerner
+				BDD.executeSelect("SELECT concerner.idStatus, STATUS.libelle, concerner.numFormation, formation.objectif "
 						+ "FROM `concerner`, formation, STATUS "
-						+ "WHERE concerner.numFormation = formation.numFormation AND concerner.idStatus = STATUS .idStatus");
+						+ "WHERE concerner.numFormation = formation.numFormation AND concerner.idStatus = STATUS.idStatus");
 
 				getJTableConcerner().setModel(BDD.buildTable(BDD.getRs()));
 
@@ -327,8 +357,8 @@ public class Formation extends JFrame implements ActionListener {
 		}
 	}
 
-	private String getStringFormationNumForma() {
-		return comboFormation_NumForma.getSelectedItem().toString();
+	private String getStringComboNumFormaF() {
+		return comboNumFormaF.getSelectedItem().toString();
 	}
 
 	private String getTxtFieldCouts() {
@@ -339,16 +369,16 @@ public class Formation extends JFrame implements ActionListener {
 		return txtFieldObjectif.getText();
 	}
 
-	public String getTxtFieldNumFormation() {
-		return txtFieldNumFormation.getText();
+	public String getStringComboConcerner_NumFormaM() {
+		return comboNumFormaM.getSelectedItem().toString();
 	}
 
-	public String getTxtFieldIdStatus() {
-		return txtFieldIdStatus.getText();
+	public String getStringComboIdStatusM() {
+		return comboIdStatusM.getSelectedItem().toString();
 	}
 
 	public String getStringComboNumFormaC() {
-		return comboConcerner_NumForma.getSelectedItem().toString();
+		return comboNumFormaC.getSelectedItem().toString();
 	}
 
 	public String getStringComboIdStatus() {
@@ -356,7 +386,7 @@ public class Formation extends JFrame implements ActionListener {
 	}
 
 	public JFrame getFrameFormation() {
-		return frameFormaConcer;
+		return frameFormation;
 	}
 
 	public JTable getJTableFormation() {
@@ -371,11 +401,19 @@ public class Formation extends JFrame implements ActionListener {
 		return comboIdStatus;
 	}
 
-	public JComboBox<String> getComboFormation_NumForma() {
-		return comboFormation_NumForma;
+	public JComboBox<String> getComboNumFormaF() {
+		return comboNumFormaF;
 	}
 
-	public JComboBox<String> getComboConcerner_NumForma() {
-		return comboConcerner_NumForma;
+	public JComboBox<String> getComboNumFormaC() {
+		return comboNumFormaC;
+	}
+
+	public JComboBox<String> getComboConcerner_NumFormaM() {
+		return comboNumFormaM;
+	}
+
+	public JComboBox<String> getComboConcerner_IdStatusM() {
+		return comboIdStatusM;
 	}
 }

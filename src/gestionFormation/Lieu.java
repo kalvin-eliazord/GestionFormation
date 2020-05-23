@@ -15,7 +15,12 @@ import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
 
 public class Lieu implements ActionListener {
-
+	
+	/**
+	 * Cette classe permet d'ajouter, de modifier et de supprimer des
+	 * champs dans la table Lieu, elle permet aussi de revenir à l'IHM Session.
+	 */
+	
 	private JFrame frameLieu = new JFrame();
 
 	private JTextField txtNomLieu = new JTextField();
@@ -38,9 +43,11 @@ public class Lieu implements ActionListener {
 	private JButton btnDelete = new JButton("Supprimer");
 	private JButton btnSession = new JButton("Retour Sessions");
 
-	private static JComboBox<String> comboIdLieu = new JComboBox<String>();
+	private JComboBox<String> comboIdLieu = new JComboBox<String>();
 
 	public Lieu() {
+
+		tableLieu.setEnabled(false);
 
 		frameLieu.setTitle("Lieu");
 		frameLieu.setBounds(100, 100, 724, 476);
@@ -113,12 +120,12 @@ public class Lieu implements ActionListener {
 
 		if(event.getSource() == btnDelete) {
 
-			BDD.executeUpdate("DELETE FROM `lieu` WHERE `idLieu`='"+getStringLieu()+"'");
-
-			// mis à jour du tableau lieu
-			BDD.executeSelect("SELECT * FROM `lieu`");
-
 			try {
+				//requete qui va supprimer un champ dans la table lieu
+				BDD.executeUpdate("DELETE FROM `lieu` WHERE `idLieu`='"+getStringLieu()+"'");
+
+				// mis à jour du tableau lieu
+				BDD.executeSelect("SELECT * FROM `lieu`");
 				getTableLieu().setModel(BDD.buildTable(BDD.getRs()));
 
 			} catch (SQLException e2) {
@@ -138,15 +145,14 @@ public class Lieu implements ActionListener {
 
 		} else if(event.getSource() == btnUpdate) {
 
-			BDD.executeUpdate("UPDATE `lieu` "
-					+ "SET `nomLieu`='"+getTxtNomLieu()+"',`adresse`='"+getTxtAdresse()+"',"
-					+ "`codePostal`='"+getTxtCodePostal()+"',`ville`='"+getTxtVille()+"' "
-					+ "WHERE `idLieu`='"+getStringLieu()+"'");
-
-			// mis à jour du tableau lieu
-			BDD.executeSelect("SELECT * FROM `lieu`");
-
 			try {
+				BDD.executeUpdate("UPDATE `lieu` "
+						+ "SET `nomLieu`='"+getTxtNomLieu()+"',`adresse`='"+getTxtAdresse()+"',"
+						+ "`codePostal`='"+getTxtCodePostal()+"',`ville`='"+getTxtVille()+"' "
+						+ "WHERE `idLieu`='"+getStringLieu()+"'");
+
+				// mis à jour du tableau lieu
+				BDD.executeSelect("SELECT * FROM `lieu`");
 				getTableLieu().setModel(BDD.buildTable(BDD.getRs()));
 
 			} catch (SQLException e1) {
@@ -155,22 +161,18 @@ public class Lieu implements ActionListener {
 
 		} else if(event.getSource() == btnInsert) {
 
-			BDD.executeUpdate("INSERT INTO `lieu`( `nomLieu`, `adresse`, `codePostal`, `ville`) "
-					+ "VALUES ('"+getTxtNomLieu()+"','"+getTxtAdresse()+"',"+getTxtCodePostal()+",'"+getTxtVille()+"')");
-
-			// mis à jour du tableau lieu
-			BDD.executeSelect("SELECT * FROM `lieu`");
-
 			try {
+				//requete qui va insérer un champ dans la table lieu
+				BDD.executeUpdate("INSERT INTO `lieu`( `nomLieu`, `adresse`, `codePostal`, `ville`) "
+						+ "VALUES ('"+getTxtNomLieu()+"','"+getTxtAdresse()+"',"+getTxtCodePostal()+",'"+getTxtVille()+"')");
+
+
+				// mis à jour du tableau lieu
+				BDD.executeSelect("SELECT * FROM `lieu`");
 				getTableLieu().setModel(BDD.buildTable(BDD.getRs()));
 
-			} catch (SQLException e2) {
-				e2.printStackTrace();
-			}
-
-			//mis à jour du jcombobox idLieu
-			comboIdLieu.removeAllItems();
-			try {
+				//mis à jour du jcombobox idLieu
+				comboIdLieu.removeAllItems();
 				BDD.executeSelect("SELECT `idLieu` FROM `lieu`");
 				while (BDD.getRs().next()) {  
 					comboIdLieu.addItem(Integer.toString(BDD.getRs().getInt("idLieu")));  
@@ -181,32 +183,26 @@ public class Lieu implements ActionListener {
 			}
 
 		} else if(event.getSource() == btnSession) {
-			
+
 			Session laSession = new Session();
-			
+
 			//rend visible l'ihm session
 			frameLieu.setVisible(false);
 			laSession.getFrameSession().setVisible(true);
 
-			//mis à jour du tableau session
-			BDD.executeSelect("SELECT * FROM `session`");
-
-			try {
-				laSession.getJTableSess().setModel(BDD.buildTable(BDD.getRs()));
-
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-
-			//mis à jour des Jcombobox
-			laSession.getComboNumSess().removeAllItems();
-			laSession.getComboIdInter().removeAllItems();
-			laSession.getComboIdLieu().removeAllItems();
-			laSession.getComboNumForma().removeAllItems();
-
 			try {
 
-				BDD.executeSelect("SELECT `numSession` FROM `session`");
+				//mis à jour du tableau session
+				BDD.executeSelect("SELECT * FROM `session`");
+				laSession.getJTableSession().setModel(BDD.buildTable(BDD.getRs()));
+
+				//mis à jour des Jcombobox
+				laSession.getComboNumSess().removeAllItems();
+				laSession.getComboIdInter().removeAllItems();
+				laSession.getComboIdLieu().removeAllItems();
+				laSession.getComboNumForma().removeAllItems();
+
+				BDD.executeSelect("SELECT `numSession` FROM `session` ORDER BY `numSession");
 				while (BDD.getRs().next()) {  
 					laSession.getComboNumSess().addItem(Integer.toString(BDD.getRs().getInt("numSession")));  
 				}

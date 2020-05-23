@@ -7,18 +7,23 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
-
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class BDD {
-
+	
+	/**
+	 * Cette classe permet d'afficher des messages d'erreurs 
+	 * et de se connecter à la BDD.
+	 */
+	
 	private static Connection cnx;
 	private static Statement stmt;
 	private static ResultSet rs;
 	private static ResultSetMetaData resMeta;
 
 	public BDD() {
+
 		chargerDriver("com.mysql.jdbc.Driver");
 		connexionBdd("mysql://localhost/", "croslformations", "root", "");
 		creerStatement();
@@ -89,9 +94,13 @@ public class BDD {
 		} catch (SQLException e) {
 
 			//exception liée à une supression d'un champ lié à une clef étrangère
-			String errorDeleteForeignKey ="com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException";
+			String errorDeleteForeignKey ="Cannot delete or update a parent row: a foreign key constraint fails";
+
 			//exception d'une date qui n'est pas rentré dans le bon format
-			String errorData ="com.mysql.jdbc.MysqlDataTruncation: Data truncation: Incorrect date value:";
+			String errorData ="MysqlDataTruncation: Data truncation: Incorrect date value:";
+
+			//exception liée à une insertion de champs identiques 
+			String errorDuplication = "Duplicate entry ";
 
 			if (e.toString().contains(errorDeleteForeignKey)){
 				JOptionPane.showMessageDialog(null,"Supprimer la SESSION liée AVANT!");
@@ -99,8 +108,11 @@ public class BDD {
 			} else if(e.toString().contains(errorData)) {	
 				JOptionPane.showMessageDialog(null,"Le format de la DATE n'est pas respecté! (AAAA/MM/JJ)");
 
+			} else if(e.toString().contains(errorDuplication)) {	
+				JOptionPane.showMessageDialog(null,"Erreur! Le champs existe déjà!");
+
 			} else {
-				JOptionPane.showMessageDialog(null,"Ajout/Modification NON effectuée!!");
+				JOptionPane.showMessageDialog(null ,"Ajout/Modification NON effectuée!!");
 			}
 
 			e.printStackTrace();
@@ -147,7 +159,6 @@ public class BDD {
 		}
 
 		return new DefaultTableModel(data, columnNames);
-
 	}	
 
 	public static ResultSet getRs() {

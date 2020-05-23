@@ -16,13 +16,18 @@ import javax.swing.JComboBox;
 
 public class Intervenant extends JFrame implements ActionListener {
 
+	/**
+	 * Cette classe permet d'ajouter, de modifier et de supprimer des
+	 * champs dans la table Intervenant, elle permet aussi de revenir à l'IHM Session.
+	 */
+	
 	private static final long serialVersionUID = 1L;
 
 	private JFrame frameInter = new JFrame();;
 
 	private JPanel panel = new JPanel();
 	private JScrollPane scrollPanInter = new JScrollPane();
-	private JTable tableInter = new JTable();
+	private JTable tableIntervenant = new JTable();
 
 	private JTextField txtNom = new JTextField();
 	private JTextField txtPrenom  = new JTextField();
@@ -41,7 +46,9 @@ public class Intervenant extends JFrame implements ActionListener {
 	private static JComboBox<String> comboIdInter = new JComboBox<String>();
 
 	public Intervenant() {
-		
+
+		tableIntervenant.setEnabled(false);
+
 		frameInter.setTitle("Intervenant");
 		frameInter.getContentPane().setLayout(null);
 		frameInter.setBounds(100, 100, 724, 476);
@@ -57,7 +64,7 @@ public class Intervenant extends JFrame implements ActionListener {
 		scrollPanInter.setBounds(6, 16, 490, 250);
 		panel.add(scrollPanInter);
 		scrollPanInter.setViewportView(getTableInter());
-		scrollPanInter.setViewportView(tableInter);
+		scrollPanInter.setViewportView(tableIntervenant);
 
 		btnInsert.setBounds(510, 76, 111, 23);
 		panel.add(btnInsert);
@@ -107,41 +114,34 @@ public class Intervenant extends JFrame implements ActionListener {
 
 		if(event.getSource() == btnDelete) {
 
-			//requete qui supprime les champs dont l'idIntervenant correspond
-			BDD.executeUpdate("DELETE FROM `intervenant` WHERE `idIntervenant`="+getStringInter());
-			//modification dynamique du tableau intervenant
-			BDD.executeSelect("SELECT * FROM `intervenant`");
-
 			try {
+				//requete qui supprime les champs dont l'idIntervenant correspond
+				BDD.executeUpdate("DELETE FROM `intervenant` WHERE `idIntervenant`="+getStringInter());
+
+				//mise à jour du tableau intervenant
+				BDD.executeSelect("SELECT * FROM `intervenant`");
 				getTableInter().setModel(BDD.buildTable(BDD.getRs()));
 
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}	
-
-			//mis à jour du jcombobox
-			comboIdInter.removeAllItems();
-			try {
+				//mis à jour du jcombobox
+				comboIdInter.removeAllItems();
 				BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
 				while (BDD.getRs().next()) {  
 					comboIdInter.addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
 				}
-
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}	
 
 		} else if(event.getSource() == btnUpdate) {
 
-			//requete qui met à jour les informations dont l'idIntervenant correspond
-			BDD.executeUpdate("UPDATE `intervenant` "
-					+ "SET `nom`='"+getTxtNom()+"', `prenom`='"+getTxtPrenom()+"', `titre`='"+getTxtTitre()+"' "
-					+ "WHERE `idIntervenant`="+getStringInter());
-
-			// mis à jour du tableau intervenants
-			BDD.executeSelect("SELECT * FROM `intervenant`");
-
 			try {
+				//requete qui met à jour les informations dont l'idIntervenant correspond
+				BDD.executeUpdate("UPDATE `intervenant` "
+						+ "SET `nom`='"+getTxtNom()+"', `prenom`='"+getTxtPrenom()+"', `titre`='"+getTxtTitre()+"' "
+						+ "WHERE `idIntervenant`="+getStringInter());
+
+				// mis à jour du tableau intervenants
+				BDD.executeSelect("SELECT * FROM `intervenant`");
 				getTableInter().setModel(BDD.buildTable(BDD.getRs()));
 
 			} catch (SQLException e1) {
@@ -150,58 +150,44 @@ public class Intervenant extends JFrame implements ActionListener {
 
 		} else if(event.getSource() == btnInsert) {
 
-			//insertion d'un champ dans la table intervenant
-			BDD.executeUpdate("INSERT INTO `intervenant`( `nom`, `prenom`, `titre`) "
-					+ "VALUES ('"+getTxtNom()+"', '"+getTxtPrenom()+"','"+getTxtTitre()+"')");	
-
-			// mis à jour du tableau intervenants
-			BDD.executeSelect("SELECT * FROM `intervenant`");
-
 			try {
+				//insertion d'un champ dans la table intervenant
+				BDD.executeUpdate("INSERT INTO `intervenant`( `nom`, `prenom`, `titre`) "
+						+ "VALUES ('"+getTxtNom()+"', '"+getTxtPrenom()+"','"+getTxtTitre()+"')");	
+
+				// mis à jour du tableau intervenants
+				BDD.executeSelect("SELECT * FROM `intervenant`");
 				getTableInter().setModel(BDD.buildTable(BDD.getRs()));
 
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+				//mis à jour du jcombobox
+				comboIdInter.removeAllItems(); 
 
-			//mis à jour du jcombobox
-			comboIdInter.removeAllItems(); 
-			try {
 				BDD.executeSelect("SELECT `idIntervenant` FROM `intervenant`");
 				while (BDD.getRs().next()) {  
 					comboIdInter.addItem(Integer.toString(BDD.getRs().getInt("idIntervenant")));  
 				}
-
-			} catch (SQLException e1) {
-				e1.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 
 		} else if(event.getSource() == btnSession) {
-			//rend visible l'ihm session
+			//rend visible l'ihm session en libérant en mémoire l'ihm intervenant
 			Session laSession = new Session();
-			getFrameIntervenant().dispose();
-			
 			laSession.getFrameSession().setVisible(true);
-
-			//mis à jour du tableau session
-			BDD.executeSelect("SELECT * FROM `session`");
+			getFrameIntervenant().dispose();
 
 			try {
-				laSession.getJTableSess().setModel(BDD.buildTable(BDD.getRs()));
+				//mis à jour du tableau session
+				BDD.executeSelect("SELECT * FROM `session`");
+				laSession.getJTableSession().setModel(BDD.buildTable(BDD.getRs()));
 
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+				//mis à jour des Jcombobox
+				laSession.getComboNumSess().removeAllItems();
+				laSession.getComboIdInter().removeAllItems();
+				laSession.getComboIdLieu().removeAllItems();
+				laSession.getComboNumForma().removeAllItems();
 
-			//mis à jour des Jcombobox
-			laSession.getComboNumSess().removeAllItems();
-			laSession.getComboIdInter().removeAllItems();
-			laSession.getComboIdLieu().removeAllItems();
-			laSession.getComboNumForma().removeAllItems();
-
-			try {
-
-				BDD.executeSelect("SELECT `numSession` FROM `session`");
+				BDD.executeSelect("SELECT `numSession` FROM `session` ORDER BY `numSession");
 				while (BDD.getRs().next()) {  
 					laSession.getComboNumSess().addItem(Integer.toString(BDD.getRs().getInt("numSession")));  
 				}
@@ -249,7 +235,7 @@ public class Intervenant extends JFrame implements ActionListener {
 	}
 
 	public JTable getTableInter() {
-		return tableInter;
+		return tableIntervenant;
 	}
 
 	public JComboBox<String> getComboIdInter() {
