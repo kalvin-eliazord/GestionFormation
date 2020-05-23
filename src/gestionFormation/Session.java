@@ -33,7 +33,9 @@ public class Session extends JFrame implements ActionListener {
 	private JButton btnInsert = new JButton("Insérer");
 	private JButton btnDeconnexion = new JButton("Déconnexion");
 	private JButton btnDelete = new JButton("Supprimer");
-	private JButton btnNaviguer = new JButton("Naviguer");
+	private JButton btnLieu = new JButton("Lieu");
+	private JButton btnFormation = new JButton("Formation");
+	private JButton btnIntervenant = new JButton("Intervenant");
 
 	private JLabel lblNumSession = new JLabel("numSession");
 	private JLabel lblDateFin = new JLabel("dateDeFin");
@@ -48,21 +50,16 @@ public class Session extends JFrame implements ActionListener {
 	private static JComboBox<String> comboIdLieu = new JComboBox<String>();
 	private static JComboBox<String> comboNumForma = new JComboBox<String>();
 	private static JComboBox<String> comboNumSess = new JComboBox<String>();
-	private static JComboBox<String> comboNavigation = new JComboBox<String>();
-
-	private String[] listeNavigation = {"Intervenant","Lieu","Formation"};
 
 	private Lieu leLieu;
 	private Intervenant lIntervenant;
 	private Formation laFormation;
-	private Connexion laConnexion;
-	
-	public Session(Lieu leLieu, Intervenant lIntervenant, Formation laFormation) {
-		
-		this.leLieu = new Lieu();
-		this.lIntervenant = new Intervenant();
-		this.laFormation = new Formation();
-		comboNavigation = new JComboBox<String>(listeNavigation);
+
+	public Session() {
+
+		leLieu = new Lieu();
+		lIntervenant = new Intervenant();
+		laFormation = new Formation();
 
 		sessionsFrame.setTitle("Session");
 		sessionsFrame.setBounds(100, 100, 893, 437);
@@ -117,6 +114,7 @@ public class Session extends JFrame implements ActionListener {
 
 		lblDateSess.setBounds(212, 23, 89, 14);
 		sessionsFrame.getContentPane().add(lblDateSess);
+
 		txtDateSess.setColumns(10);
 		txtDateSess.setBounds(212, 36, 86, 20);
 		sessionsFrame.getContentPane().add(txtDateSess);
@@ -124,8 +122,8 @@ public class Session extends JFrame implements ActionListener {
 		lblNumForma.setBounds(612, 23, 105, 14);
 		sessionsFrame.getContentPane().add(lblNumForma);
 
-		btnNaviguer.setBounds(192, 346, 164, 23);
-		sessionsFrame.getContentPane().add(btnNaviguer);
+		btnLieu.setBounds(192, 346, 164, 23);
+		sessionsFrame.getContentPane().add(btnLieu);
 
 		comboIdInter.setBounds(407, 35, 89, 22);
 		sessionsFrame.getContentPane().add(comboIdInter);
@@ -146,14 +144,19 @@ public class Session extends JFrame implements ActionListener {
 		comboNumSess.setBounds(10, 35, 96, 22);
 		sessionsFrame.getContentPane().add(comboNumSess);
 
-		comboNavigation.setBounds(10, 346, 172, 22);
-		sessionsFrame.getContentPane().add(comboNavigation);
+		btnIntervenant.setBounds(10, 346, 164, 23);
+		sessionsFrame.getContentPane().add(btnIntervenant);
+
+		btnFormation.setBounds(366, 346, 164, 23);
+		sessionsFrame.getContentPane().add(btnFormation);
 
 		btnDeconnexion.addActionListener(this);
 		btnDelete.addActionListener(this);
 		btnUpdate.addActionListener(this);
 		btnInsert.addActionListener(this);
-		btnNaviguer.addActionListener(this);
+		btnLieu.addActionListener(this);
+		btnIntervenant.addActionListener(this);
+		btnFormation.addActionListener(this);
 	}
 
 	public void actionPerformed(ActionEvent event) {
@@ -304,18 +307,16 @@ public class Session extends JFrame implements ActionListener {
 
 		} else if(event.getSource() == btnDeconnexion) {
 
+			getFrameSession().dispose();
+			Connexion laConnexion = new Connexion();
+
 			//passage au frame connexion
 			laConnexion.getFrameConnexion().setVisible(true);
-			sessionsFrame.setVisible(false);
 
-		} else if(event.getSource() == btnNaviguer) {
+		} else if(event.getSource() == btnIntervenant) {
 
-			//passage au frame selectionné dans le combobox
-			sessionsFrame.setVisible(false);
-
-			if (comboNavigation.getSelectedItem().toString() == "Intervenant") 
-
-				lIntervenant.getFrameIntervenant().setVisible(true);
+			getFrameSession().dispose();
+			lIntervenant.getFrameIntervenant().setVisible(true);
 
 			try {
 				//requete qui va initialiser le tableau des intervenants
@@ -339,8 +340,9 @@ public class Session extends JFrame implements ActionListener {
 			}
 
 
-		} else if (comboNavigation.getSelectedItem().toString() == "Lieu") {
+		} else if(event.getSource() == btnLieu) {
 
+			getFrameSession().dispose();
 			leLieu.getFrameLieu().setVisible(true);
 
 			try {
@@ -364,14 +366,14 @@ public class Session extends JFrame implements ActionListener {
 				e1.printStackTrace();
 			}
 
-		} else if (comboNavigation.getSelectedItem().toString() == "Formation") {
+		} else if(event.getSource() == btnFormation ){
 
-			laFormation.getFrameFormaConcer().setVisible(true);
-
-			//mis à jour du tableau formation
-			BDD.executeSelect("SELECT * FROM `formation`");
+			getFrameSession().dispose();
+			laFormation.getFrameFormation().setVisible(true);
 
 			try {
+				//mis à jour du tableau formation
+				BDD.executeSelect("SELECT * FROM `formation`");
 				laFormation.getJTableFormation().setModel(BDD.buildTable(BDD.getRs()));
 
 			} catch (SQLException e2) {
@@ -394,8 +396,7 @@ public class Session extends JFrame implements ActionListener {
 
 			try {
 				//requete qui va initialiser la table concerner en affichant le nom du status et l'objectif de la formation associé
-				BDD.executeSelect("SELECT * concerner");
-
+				BDD.executeSelect("SELECT * FROM concerner");
 				laFormation.getJTableConcerner().setModel(BDD.buildTable(BDD.getRs()));
 
 			} catch (SQLException e1) {

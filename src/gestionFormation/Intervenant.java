@@ -39,8 +39,6 @@ public class Intervenant extends JFrame implements ActionListener {
 	private JLabel lblNom = new JLabel("nom");
 
 	private static JComboBox<String> comboIdInter = new JComboBox<String>();
-	
-	private Session laSession;
 
 	public Intervenant() {
 		
@@ -179,9 +177,10 @@ public class Intervenant extends JFrame implements ActionListener {
 			}
 
 		} else if(event.getSource() == btnSession) {
-
 			//rend visible l'ihm session
-			frameInter.setVisible(false);
+			Session laSession = new Session();
+			getFrameIntervenant().dispose();
+			
 			laSession.getFrameSession().setVisible(true);
 
 			//mis à jour du tableau session

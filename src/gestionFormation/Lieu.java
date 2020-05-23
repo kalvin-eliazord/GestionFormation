@@ -40,8 +40,6 @@ public class Lieu implements ActionListener {
 
 	private static JComboBox<String> comboIdLieu = new JComboBox<String>();
 
-	private Session laSession;
-
 	public Lieu() {
 
 		frameLieu.setTitle("Lieu");
@@ -183,7 +181,9 @@ public class Lieu implements ActionListener {
 			}
 
 		} else if(event.getSource() == btnSession) {
-
+			
+			Session laSession = new Session();
+			
 			//rend visible l'ihm session
 			frameLieu.setVisible(false);
 			laSession.getFrameSession().setVisible(true);

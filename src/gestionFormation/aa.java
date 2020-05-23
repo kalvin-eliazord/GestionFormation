@@ -14,7 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.Color;
 import javax.swing.JComboBox;
 
-public class Formation extends JFrame implements ActionListener {
+public class aa extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -54,16 +54,19 @@ public class Formation extends JFrame implements ActionListener {
 	private static JComboBox<String> comboFormation_NumForma = new JComboBox<String>();
 	private JComboBox<String> comboConcerner_NumForma = new JComboBox<String>();
 
-	public Formation() {
+	public aa() {
 
 		frameFormaConcer.setTitle("Formation / Concerner");
 		frameFormaConcer.setBounds(100, 100, 893, 702);
 		frameFormaConcer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frameFormaConcer.getContentPane().setLayout(null);
+		frameFormaConcer.getContentPane().setLayout(null);
 
 		panelFormation.setBounds(10, 79, 826, 245);
 		panelFormation.setForeground(Color.BLUE);
 		panelFormation.setBorder(new TitledBorder(null, "FORMATIONS", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		frameFormaConcer.getContentPane().add(panelFormation);
+		panelFormation.setLayout(null);
 
 		scrollPanFormation.setBounds(6, 16, 645, 218);
 		panelFormation.add(scrollPanFormation);
@@ -109,6 +112,7 @@ public class Formation extends JFrame implements ActionListener {
 		comboConcerner_NumForma.setBounds(10, 35, 130, 22);
 		frameFormaConcer.getContentPane().add(comboConcerner_NumForma);
 
+		panelConcerner.setLayout(null);
 		panelConcerner.setForeground(Color.BLUE);
 		panelConcerner.setBorder(new TitledBorder(null, "CONCERNER", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panelConcerner.setBounds(10, 380, 826, 245);
@@ -200,18 +204,19 @@ public class Formation extends JFrame implements ActionListener {
 
 		} else if (event.getSource() == btnInsertFormation) {
 
+			//requete qui va insérer dans la table formation
+			BDD.executeUpdate("INSERT INTO `formation`( `objectif`, `couts`) VALUES ('"+getTxtFieldObjectif()+"',"+getTxtFieldCouts()+")");	
+			// mis à jour du tableau formation
+			BDD.executeSelect("SELECT * FROM `formation`");
+
 			try {
-				//requete qui va insérer dans la table formation
-				BDD.executeUpdate("INSERT INTO `formation`( `objectif`, `couts`) VALUES ('"+getTxtFieldObjectif()+"',"+getTxtFieldCouts()+")");	
-				// mis à jour du tableau formation
-				BDD.executeSelect("SELECT * FROM `formation`");
 				getJTableFormation().setModel(BDD.buildTable(BDD.getRs()));
 
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 
-			//mis à jour du jcombobox Formation.numFormation
+			//mis à jour du jcombobox numFormation
 			getComboFormation_NumForma().removeAllItems();
 			try {
 				BDD.executeSelect("SELECT `numFormation` FROM `formation`");
@@ -338,15 +343,15 @@ public class Formation extends JFrame implements ActionListener {
 	private String getTxtFieldObjectif() {
 		return txtFieldObjectif.getText();
 	}
-
+	
 	public String getTxtFieldNumFormation() {
 		return txtFieldNumFormation.getText();
 	}
-
+	
 	public String getTxtFieldIdStatus() {
 		return txtFieldIdStatus.getText();
 	}
-
+	
 	public String getStringComboNumFormaC() {
 		return comboConcerner_NumForma.getSelectedItem().toString();
 	}
@@ -355,7 +360,7 @@ public class Formation extends JFrame implements ActionListener {
 		return comboIdStatus.getSelectedItem().toString();
 	}
 
-	public JFrame getFrameFormation() {
+	public JFrame getFrameFormaConcer() {
 		return frameFormaConcer;
 	}
 

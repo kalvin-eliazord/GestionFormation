@@ -24,15 +24,9 @@ public class Connexion implements ActionListener {
 	private JTextField txtUsername = new JTextField();
 	private JTextField txtPassword = new JPasswordField();
 	
-	Lieu leLieu = new Lieu();
-	Intervenant lIntervenant = new Intervenant();
-	Formation laFormation = new Formation();
-	
-	private Session laSession = new Session(leLieu, lIntervenant, laFormation);;
+	private Session laSession = new Session();
 	
 	public Connexion() {
-		
-		
 		
 		txtPassword.setBounds(143, 139, 123, 20);
 		txtPassword.setColumns(10);

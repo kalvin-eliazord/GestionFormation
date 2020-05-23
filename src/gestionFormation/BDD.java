@@ -7,6 +7,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
+
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class BDD {
@@ -17,7 +19,6 @@ public class BDD {
 	private static ResultSetMetaData resMeta;
 
 	public BDD() {
-
 		chargerDriver("com.mysql.jdbc.Driver");
 		connexionBdd("mysql://localhost/", "croslformations", "root", "");
 		creerStatement();
@@ -31,7 +32,7 @@ public class BDD {
 		}
 		catch (ClassNotFoundException e) {
 
-			//laConnexion.affichagePopUp("Driver non trouvé!");
+			JOptionPane.showMessageDialog(null, "Driver non trouvé!");
 			e.printStackTrace();
 		}
 	}
@@ -43,7 +44,7 @@ public class BDD {
 			System.out.println("Connexion à la BDD "+ bddName +" OK!!");
 		}
 		catch (SQLException e) {
-			System.out.println("Problème Connexion BDD "+ bddName + "  !!");
+			JOptionPane.showMessageDialog(null, "Problème Connexion BDD "+ bddName + "  !!");
 
 			e.printStackTrace();
 		}
@@ -55,7 +56,7 @@ public class BDD {
 			stmt = cnx.createStatement();
 		} 
 		catch (SQLException e) {
-			//	laConnexion.affichagePopUp("Problème création statement!!");
+			JOptionPane.showMessageDialog(null, "Problème création statement!!");
 			e.printStackTrace();
 		}
 	}
@@ -69,11 +70,11 @@ public class BDD {
 			String errorConnexion = "Unknown column 'status.idUtilisateur'";
 
 			if (e.toString().contains(errorConnexion)){
-				//	laConnexion.affichagePopUp("Tu n'as pas le statut pour te connecter!");
+				JOptionPane.showMessageDialog(null, "Tu n'as pas le statut pour te connecter!");
 
 			} else {
 
-				//	laConnexion.affichagePopUp("Probleme requete SELECT non executée !!");
+				JOptionPane.showMessageDialog(null, "Probleme requete SELECT non executée !!");
 				e.printStackTrace();
 
 			}
@@ -83,7 +84,7 @@ public class BDD {
 	public static void executeUpdate(String requete) {
 		try {
 			stmt.executeUpdate(requete);
-			//	laConnexion.affichagePopUp("Mis à jour réussie!");
+			JOptionPane.showMessageDialog(null,"Mis à jour réussie!");
 
 		} catch (SQLException e) {
 
@@ -93,13 +94,13 @@ public class BDD {
 			String errorData ="com.mysql.jdbc.MysqlDataTruncation: Data truncation: Incorrect date value:";
 
 			if (e.toString().contains(errorDeleteForeignKey)){
-				//		laConnexion.affichagePopUp("Supprimer la SESSION liée AVANT!");
+				JOptionPane.showMessageDialog(null,"Supprimer la SESSION liée AVANT!");
 
 			} else if(e.toString().contains(errorData)) {	
-				//	laConnexion.affichagePopUp("Le format de la DATE n'est pas respecté! (AAAA/MM/JJ)");
+				JOptionPane.showMessageDialog(null,"Le format de la DATE n'est pas respecté! (AAAA/MM/JJ)");
 
 			} else {
-				//	laConnexion.affichagePopUp("Ajout/Modification NON effectuée!!");
+				JOptionPane.showMessageDialog(null,"Ajout/Modification NON effectuée!!");
 			}
 
 			e.printStackTrace();
